@@ -1,0 +1,175 @@
+:root {
+  --Onyx: #101010;
+  --Carbon-Black-Strong: #181818;
+  --Carbon-Black-Mid: #1d1d1d;
+  --Carbon-Black-Low: #242424;
+  --Violet-Twillight: #4f4bb6;
+  --Wisteria-Blue: #86a5d9;
+  --Strong-Cyan: #26dcdc;
+  --Bright-Snow: #f7f7f7;
+}
+
+@font-face {
+  font-family: "Cinzel";
+  src: url("../../assets/fonts/Cinzel/static/Cinzel-Regular.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Cinzel-Bold";
+  src: url("../../assets/fonts/Cinzel/static/Cinzel-Bold.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  font-family: "Cinzel", serif;
+}
+
+#nav-bar {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 50px;
+  background: #1d1d1d;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 90px;
+  z-index: 9999;
+}
+
+#nav-bar ion-button {
+  --background: 0;
+  --border: 0;
+  --box-shadow: 0;
+  height: 66px;
+}
+
+ion-toolbar {
+  font-family: "Cinzel-Bold";
+  font-weight: 900;
+  text-align: center;
+}
+
+.home-page {
+  --background: #181818;
+  padding: 16px;
+}
+
+.prestador-card {
+  margin: 1% 20%;
+  background: #242424;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(44, 62, 80, 0.08);
+  padding: 16px;
+}
+
+.descricao,
+.estado-vazio {
+  color: #f7f7f7;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.chip {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: row;
+  background: #4f4bb6;
+  color: #f7f7f7;
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 0.62rem;
+  width: 20rem;
+  max-width: 90px;
+  font-weight: 600;
+}
+
+.lista-prestadores {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.prestador-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.prestador-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.prestador-header h2 {
+  font-family: "Cinzel-Bold";
+  font-weight: 600;
+  margin: 4px 0;
+  font-size: 1.1rem;
+  color: #f7f7f7;
+}
+
+.servicos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.servico-card {
+  border-radius: 14px;
+  padding: 12px;
+  background: #1d1d1d;
+}
+
+.servico-card h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  color: #f7f7f7;
+}
+
+.servico-card p {
+  margin: 0 0 8px;
+  color: #47546b;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.horario {
+  display: block;
+  color: #86a5d9;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.btn {
+  font-family: "Cinzel-Bold";
+  border-radius: 200px;
+  font-size: 20px;
+  margin: auto;
+  padding: 8px;
+  background-color: #4f4bb6;
+}
+
+@media (max-width: 768px) {
+  .prestador-card {
+    margin: 1% 4%;
+  }
+
+  .btn {
+    font-family: "Cinzel-Bold";
+    border-radius: 8px;
+    font-size: 20px;
+    margin: 2px 0;
+    padding: 8px;
+    background-color: #4f4bb6;
+  }
+}

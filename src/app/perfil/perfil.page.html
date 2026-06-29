@@ -1,0 +1,63 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title id="titulo-perfil"
+      >PERFIL - {{ usuario?.Nome || 'USUÁRIO' }}</ion-title
+    >
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div id="classificacao">{{ tipoUsuario || 'USUÁRIO' }}</div>
+
+  <div class="perfil-container">
+    <div class="infos">
+      <img src="" alt="Foto do Usuário" />
+      <div class="dados">
+        <p><strong>NOME:</strong> {{ usuario.Nome ?? 'N/A' }}</p>
+        <p><strong>ID:</strong> {{ usuario.id ?? 'N/A' }}</p>
+        <p><strong>CPF:</strong> {{ usuario.CPF ?? 'N/A' }}</p>
+        <p><strong>EMAIL:</strong> {{ usuario.Email ?? 'N/A' }}</p>
+        <p><strong>TELEFONE:</strong> {{ usuario.Telefone ?? 'N/A' }}</p>
+      </div>
+    </div>
+    <ion-button id="editar" (click)="setOpen(true)">EDITAR</ion-button>
+  </div>
+
+  <ion-modal [isOpen]="estaAberto">
+    <ng-template>
+      <div class="modal-content">
+        <ion-toolbar class=>
+          <ion-buttons slot="start">
+            <ion-button (click)="setOpen(false)">Cancelar</ion-button>
+          </ion-buttons>
+          <ion-title>Editar...</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="editarPerfil()" [strong]="true">Salvar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+        <!-- Formulário de edição de perfil -->
+
+        <div class="ion-padding">
+          <ion-input placeholder="Nome" [(ngModel)]="usuario.Nome"></ion-input>
+          <ion-input placeholder="Email" [(ngModel)]="usuario.Email"></ion-input>
+          <ion-input placeholder="Telefone" [(ngModel)]="usuario.Telefone"></ion-input>
+        </div>
+
+          <ion-button color="danger" class="botao-excluir" (click)="excluirPerfil()" position="bottom">Excluir Perfil</ion-button>
+      </div>
+    </ng-template>
+  </ion-modal>
+
+  <div id="nav-bar">
+    <ion-button (click)="goToLista()"
+      ><img src="../../assets/imgs/Lista - Icon.png" alt="" height="66px"
+    /></ion-button>
+
+    <ion-button
+      ><img
+        src="../../assets/imgs/Perfil - Icon - Active.png"
+        alt=""
+        height="66px"
+    /></ion-button>
+  </div>
+</ion-content>

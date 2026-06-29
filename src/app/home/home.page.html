@@ -1,0 +1,47 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Serviços disponíveis</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="home-page">
+
+  <section class="lista-prestadores">
+    @for (prestador of prestadores; track prestador.id) {
+      <article class="prestador-card">
+        <header class="prestador-header">
+          <div>
+            <h2>{{ prestador.Nome }}</h2>
+            <p class="descricao">{{ prestador.Descricao.trim() || 'Sem descrição cadastrada no momento.' }}</p>
+          </div>
+          <span class="chip">{{ prestador.Servicos?.length || 0 }} serviços</span>
+        </header>
+
+        @if (prestador.Servicos?.length) {
+          <div class="servicos-lista">
+            @for (servico of prestador.Servicos; track servico.id) {
+              <article class="servico-card">
+                <h3>{{ servico.nome }}</h3>
+                <p>{{ servico.descricao }}</p>
+                <span class="horario">
+                  Horário: {{ formatTime(servico.horarioInicio) }} às {{ formatTime(servico.horarioFim) }}
+                </span>
+              </article>
+              @if(usuario?.tipoUsuario === 'Cliente') {
+                <button class="btn btn-outline" (click)="agendarServico(prestador, servico)">Agendar Serviço</button>
+              }
+            }
+          </div>
+        } @else {
+          <p class="estado-vazio">Nenhum serviço cadastrado para este prestador.</p>
+        }
+      </article>
+    }
+  </section>
+
+    <div id="nav-bar">
+    <ion-button><img src="../../assets/imgs/Lista - Icon - Active.png" alt="" height="66px"></ion-button>
+
+    <ion-button (click)="goToPerfil()"><img src="../../assets/imgs/Perfil - Icon.png" alt="" height="66px"></ion-button>
+  </div>
+</ion-content>

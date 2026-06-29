@@ -1,0 +1,219 @@
+:root {
+    --Onyx: #101010;
+    --Carbon-Black-Strong: #181818;
+    --Carbon-Black-Mid: #1d1d1d;
+    --Carbon-Black-Low: #242424;
+    --Violet-Twillight: #4f4bb6;
+    --Wisteria-Blue: #86a5d9;
+    --Strong-Cyan: #26dcdc;
+    --Bright-Snow: #f7f7f7;
+}
+
+@font-face {
+    font-family: "Cinzel";
+    src: url("../../assets/fonts/Cinzel/static/Cinzel-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Cinzel-Bold";
+    src: url("../../assets/fonts/Cinzel/static/Cinzel-Bold.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: "Cinzel", serif;
+}
+#auth-card {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+
+
+.display-off {
+    display: none;
+}
+#hero-image {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+}
+#login-content,
+#cadastro-content {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+#login-content {
+    padding: 0 400px;
+    margin: 40px auto;
+    background-image: url(../../assets/imgs/Vector\ 1.png);
+    background-size: 100% 100%;
+    text-align: center;
+    min-height: 586.04px;
+    /* Altura mínima, mas permite crescer se faltar espaço */
+    height: 100%;
+    max-height: 1200px;
+    padding-bottom: 30px;
+    /* Margem interna pro botão não colar na barra final */
+}
+
+#title {
+    font-family: "Cinzel-Bold";
+    font-size: 64px;
+    padding-top: 120px;
+    font-weight: bold;
+}
+
+#login-form {
+    font-size: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 40px;
+}
+
+#cadastro-content {
+    padding: 0 400px;
+    margin: 40px auto;
+    background-image: url(../../assets/imgs/Vector\ 2.png);
+    background-size: 100% 100%;
+    text-align: center;
+    min-height: 586.04px;
+    height: auto;
+    padding-bottom: 30px;
+}
+
+#cadastro-form {
+    font-size: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 40px;
+}
+
+#toggle-form {
+    font-family: "Cinzel-Bold";
+    color: #26dcdc;
+    cursor: pointer;
+}
+
+#toggle-form:hover {
+    transform: 2s;
+    text-decoration: underline;
+}
+
+ion-input {
+    text-align: justify;
+}
+
+ion-button {
+    font-family: "Cinzel-Bold";
+    --background: #86a5d9;
+    --color: #f7f7f7;
+    --border-radius: 20px;
+    font-size: 28px;
+    width: 146px;
+    height: 63px;
+    margin: 16px auto;
+}
+
+.input-custom {
+    --border-opacity: 1 !important;
+    --border-style: solid !important;
+    --border-width: 0 0 2px 0 !important;
+
+    --border-color: #86a5d9 !important;
+    border-bottom: solid 2px #86a5d9;
+
+    --highlight-color-invalid: #86a5d9 !important;
+    --highlight-color-valid: #26dcdc !important;
+
+    --label-color: #f7f7f7 !important;
+    --label-color-focused: #86a5d9 !important;
+}
+
+.input-custom::part(container) {
+    border-bottom: none !important;
+}
+
+#login-content,
+#cadastro-content {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 40px auto;
+}
+
+#cadastro-content {
+    /* Evita que ele quebre o layout enquanto inicia escondido */
+    margin-top: 40px;
+}
+
+
+// Estilos para telas menores (mobile)
+@media (max-width: 768px) {
+    #hero-image {
+        width: 90%; /* Usa porcentagem para se adaptar a qualquer tela */
+        max-width: 336px;
+        margin: 20px auto;
+    }
+
+    #login-content,
+    #cadastro-content {
+        /* CRUCIAL: Zera o padding de 400px do desktop e deixa uma margem segura nas laterais */
+        padding: 35px 20px; 
+        margin: 20px auto 80px auto;
+        
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        text-align: center;
+        min-height: 586.04px;
+        height: auto;
+        padding-bottom: 30px;
+    }
+
+    #title {
+        font-family: "Cinzel-Bold";
+        font-size: 36px; /* Reduzido de 64px para não quebrar linha agressivamente */
+        padding-top: 60px; /* Reduzido para encaixar melhor no vetor de fundo */
+        font-weight: bold;
+    }
+
+    #login-form,
+    #cadastro-form {
+        font-size: 18px; /* Ajustado para telas menores */
+        display: flex;
+        flex-direction: column;
+        gap: 15px; /* Reduzido levemente o espaçamento */
+        margin: 20px 10px; /* Margens menores para aproveitar o espaço */
+    }
+
+    #toggle-form {
+        font-family: "Cinzel-Bold";
+        color: #26dcdc;
+        cursor: pointer;
+    }
+
+    #toggle-form:hover {
+        /* Correção do transform antigo */
+        transition: text-decoration 0.2s ease-in-out; 
+        text-decoration: underline;
+    }
+
+    ion-button {
+        font-family: "Cinzel-Bold";
+        --background: #86a5d9;
+        --color: #f7f7f7;
+        --border-radius: 20px;
+        font-size: 22px; /* Reduzido levemente para caber bem no botão */
+        width: 170px;
+        height: 60px; /* Reduzido levemente */
+        margin: 16px auto;
+    }
+}

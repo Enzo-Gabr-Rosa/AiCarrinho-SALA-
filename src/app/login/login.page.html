@@ -1,0 +1,144 @@
+<ion-content [fullscreen]="true">
+  <ion-img src="../../assets/imgs/Hero Image.png" id="hero-image"></ion-img>
+
+  <div class="form-container">
+
+    <div id="auth-card">
+
+      <!-- LOGIN -->
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="login()"
+        id="login-content"
+        #loginFormEl>
+
+        <ion-text>
+          <h1 id="title">LOGIN</h1>
+        </ion-text>
+
+        <div id="login-form">
+          <ion-input
+            label="USUÁRIO:"
+            fill="underline"
+            class="input-custom"
+            type="text"
+            formControlName="Nome">
+          </ion-input>
+
+          <ion-input
+            label="SENHA:"
+            fill="underline"
+            class="input-custom"
+            type="password"
+            formControlName="Senha">
+          </ion-input>
+
+          <ion-text>
+            NÃO POSSUÍ UMA CONTA?
+            <span
+              (click)="trocarFormulario()"
+              id="toggle-form">
+              CADASTRE-SE
+            </span>
+          </ion-text>
+        </div>
+
+        <ion-button type="submit">
+          ENTRAR
+        </ion-button>
+
+      </form>
+
+      <!-- CADASTRO -->
+      <form
+        [formGroup]="cadastroUsuarioForm"
+        (ngSubmit)="cadastrarUsuario()"
+        id="cadastro-content"
+        class="display-off"
+        #cadastroFormEl>
+
+        <ion-text>
+          <h1 id="title">CADASTRO</h1>
+        </ion-text>
+
+        <div id="cadastro-form">
+
+          <ion-input
+            label="USUÁRIO:"
+            fill="underline"
+            class="input-custom"
+            type="text"
+            formControlName="Nome">
+          </ion-input>
+
+          <ion-input
+            label="EMAIL:"
+            fill="underline"
+            class="input-custom"
+            type="text"
+            formControlName="Email">
+          </ion-input>
+
+          <ion-input
+            label="TELEFONE:"
+            fill="underline"
+            class="input-custom"
+            type="text"
+            formControlName="Telefone">
+          </ion-input>
+
+          <ion-input
+            label="CPF:"
+            fill="underline"
+            class="input-custom"
+            type="text"
+            formControlName="CPF">
+          </ion-input>
+
+          <ion-input
+            label="SENHA:"
+            fill="underline"
+            class="input-custom"
+            type="password"
+            formControlName="Senha">
+          </ion-input>
+
+          <ion-select
+            label="TIPO USUÁRIO"
+            fill="underline"
+            class="input-custom"
+            formControlName="TipoUsuario">
+
+            <ion-select-option value="Cliente">
+              Cliente
+            </ion-select-option>
+
+            <ion-select-option value="Prestador">
+              Prestador de serviço
+            </ion-select-option>
+
+          </ion-select>
+
+          <ion-text>
+            JÁ POSSUÍ UMA CONTA?
+            <span
+              (click)="trocarFormulario()"
+              id="toggle-form">
+              LOGIN
+            </span>
+          </ion-text>
+
+          <br>
+
+          <ion-button type="submit">
+            CADASTRAR
+          </ion-button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</ion-content>
