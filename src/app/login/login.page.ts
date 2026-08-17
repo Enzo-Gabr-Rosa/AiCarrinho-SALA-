@@ -18,7 +18,7 @@ import { animate } from 'animejs';
   imports: [IonInput, IonButton, IonSelect, IonSelectOption, IonContent, IonText, IonImg, CommonModule, FormsModule, ReactiveFormsModule]
 })
 
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit {//Verificação do formato de cpf e telefone
   private clienteService = inject(clienteService);
   private administradorService = inject(administradorService);
   private prestadorService = inject(prestadorService);

@@ -14,7 +14,8 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['home.page.scss'],
   imports: [IonHeader, IonButton, IonToolbar, IonTitle, IonContent],
 })
-export class HomePage {
+export class HomePage { //Implementar clicar no card do prestador e ser levado a pagina de perfil do prestador
+  //Implementar um gap entre o tempo permitido para um agendamento (ex: 1 hora)
   private prestadorService: prestadorService = inject(prestadorService);
   private agendamentoService: agendamentoService = inject(agendamentoService);
   protected prestadores: readonly Prestador[] = [];
