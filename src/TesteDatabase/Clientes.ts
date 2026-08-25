@@ -10,6 +10,15 @@ export const Clientes: Cliente[] = [
         Senha: "13sadf515dsa2154",
         tipoUsuario: 'Cliente'
     },
+    {
+        id: 67,
+        CPF: "000.000.000.11",
+        Nome: "Otto",
+        Telefone: "(99) 9999-9999",
+        Email: "otto.gabr.rosa@gmail.com",
+        Senha: "otto123",
+        tipoUsuario: 'Cliente'
+    },
     //Carros[]
     {
         id: 2,

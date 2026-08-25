@@ -60,6 +60,11 @@ export class PerfilPage implements OnInit {
     ngOnInit() {
   }
 
+imagemErro(event: Event) {
+  const img = event.target as HTMLImageElement;
 
+  img.onerror = null;
+  img.src = 'assets/imgs/Foto User.png';
+}
 
 }
