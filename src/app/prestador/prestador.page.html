@@ -1,0 +1,55 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Prestador</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding prestador-page">
+  @if (prestador) {
+    <section class="header-card">
+      <h2>{{ prestador.Nome }}</h2>
+      <p>{{ prestador.Descricao || 'Adicione uma descrição para o seu perfil.' }}</p>
+    </section>
+
+    @if (mensagemErro) {
+      <section style="background: #fee; border: 1px solid #fcc; border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem; color: #c00; font-size: 0.9rem;">
+        {{ mensagemErro }}
+      </section>
+    }
+
+    <section class="panel">
+      <h3>Novo serviço</h3>
+
+      <ion-input label="Nome do serviço" [(ngModel)]="novoServico.nome"></ion-input>
+      <ion-input label="Descrição" [(ngModel)]="novoServico.descricao"></ion-input>
+      <ion-input label="Início" type="datetime-local" [(ngModel)]="novoServico.horarioInicio"></ion-input>
+      <ion-input label="Fim" type="datetime-local" [(ngModel)]="novoServico.horarioFim"></ion-input>
+
+      <ion-button expand="block" (click)="cadastrarServico()">Adicionar serviço</ion-button>
+    </section>
+
+    <section class="panel">
+      <h3>Serviços cadastrados</h3>
+
+      @if (!prestador.Servicos.length) {
+        <p class="empty-state">Ainda não há serviços cadastrados.</p>
+      } @else {
+        @for (servico of prestador.Servicos; track servico.id) {
+          <article class="servico-card">
+            <div class="servico-header">
+              <h4>{{ servico.nome }}</h4>
+              <ion-button color="danger" fill="clear" (click)="removerServico(servico.id)">Excluir</ion-button>
+            </div>
+            <p>{{ servico.descricao || 'Sem descrição adicional.' }}</p>
+            <span>{{ formatDate(servico.horarioInicio) }} até {{ formatDate(servico.horarioFim) }}</span>
+          </article>
+        }
+      }
+    </section>
+
+    <div class="footer-actions">
+      <ion-button expand="block" (click)="voltarParaHome()">Início</ion-button>
+      <ion-button expand="block" fill="outline" (click)="voltarParaPerfil()">Perfil</ion-button>
+    </div>
+  }
+</ion-content>

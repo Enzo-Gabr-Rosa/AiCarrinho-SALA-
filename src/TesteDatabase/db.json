@@ -1,0 +1,45 @@
+{
+  "clientes": [
+    {
+      "id": 1,
+      "CPF": "12345678900",
+      "Nome": "Maria",
+      "Telefone": "11999999999",
+      "Email": "maria@email.com",
+      "Senha": "123456",
+      "tipoUsuario": "Cliente"
+    }
+  ],
+  "prestadores": [
+    {
+      "id": 1,
+      "CPF": "11122233344",
+      "Nome": "João",
+      "Telefone": "11888888888",
+      "Email": "joao@email.com",
+      "Senha": "123456",
+      "Descricao": "Eletricista",
+      "Servicos": [
+        {
+          "id": 1,
+          "nome": "Instalação elétrica",
+          "descricao": "Instalação residencial",
+          "horarioInicio": "2026-08-29T09:00:00",
+          "horarioFim": "2026-08-29T11:00:00"
+        }
+      ],
+      "tipoUsuario": "Prestador"
+    }
+  ],
+  "agendamentos": [
+    {
+      "id": 1,
+      "idCliente": 1,
+      "idPrestador": 1,
+      "idServico": 1,
+      "horarioInicio": "2026-08-29T09:00:00",
+      "horarioFim": "2026-08-29T11:00:00",
+      "status": "Pendente"
+    }
+  ]
+}

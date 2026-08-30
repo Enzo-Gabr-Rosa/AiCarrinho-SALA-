@@ -1,0 +1,49 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Agendamentos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding agendamentos-page">
+  @if (!agendamentos.length) {
+    <section class="empty-state">
+      <h2>Nenhum agendamento encontrado</h2>
+      <p>Quando houver uma solicitação, ela aparecerá aqui.</p>
+      <ion-button expand="block" (click)="voltarParaHome()">Voltar para início</ion-button>
+    </section>
+  } @else {
+    <section class="lista-agendamentos">
+      @for (agendamento of agendamentos; track agendamento.id) {
+        <article class="agendamento-card">
+          <header>
+            <div>
+              <h3>
+                {{ getServicoDoPrestador(agendamento.idPrestador, agendamento.idServico)?.nome || 'Serviço' }}
+              </h3>
+              <p class="prestador-nome">
+                Prestador: {{ getPrestadorPorId(agendamento.idPrestador)?.Nome || 'Não informado' }}
+              </p>
+            </div>
+            <span class="status status-{{ agendamento.status.toLowerCase() }}">{{ agendamento.status }}</span>
+          </header>
+
+          <div class="detalhes">
+            <p><strong>Início:</strong> {{ formatDate(agendamento.horarioInicio) }}</p>
+            <p><strong>Fim:</strong> {{ formatDate(agendamento.horarioFim) }}</p>
+          </div>
+
+          @if (agendamento.status !== 'Cancelado') {
+            <ion-button color="danger" fill="outline" expand="block" (click)="cancelarAgendamento(agendamento.id)">
+              Cancelar agendamento
+            </ion-button>
+          }
+        </article>
+      }
+    </section>
+  }
+
+  <div class="footer-actions">
+    <ion-button expand="block" (click)="voltarParaHome()">Voltar para início</ion-button>
+    <ion-button expand="block" fill="outline" (click)="voltarParaPerfil()">Perfil</ion-button>
+  </div>
+</ion-content>

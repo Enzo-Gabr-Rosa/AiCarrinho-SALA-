@@ -1,12 +1,13 @@
-import { Component, inject, OnInit, ɵsetInjectorProfilerContext } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule,FormBuilder, Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { IonContent, IonText, IonImg, IonHeader, IonTitle, IonToolbar, IonButton, IonIcon, IonCol, IonRow, IonGrid, IonItem, IonInput, IonList, IonSelectOption, IonSelect } from '@ionic/angular/standalone';
+import { FormsModule, Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
+import { IonContent, IonText, IonImg, IonButton, IonInput, IonSelectOption, IonSelect } from '@ionic/angular/standalone';
 import { ToastController } from '@ionic/angular';
 import { clienteService } from '../Services/cliente-service';
 import { administradorService } from '../Services/administador-service';
 import { prestadorService } from '../Services/prestador-service';
-import {Router} from '@angular/router';
+import { autenticacaoService } from '../Services/autenticacao-service';
+import { Router } from '@angular/router';
 import { Usuario } from '../Modelos/usuario-modelo';
 import { animate } from 'animejs';
 
@@ -18,13 +19,14 @@ import { animate } from 'animejs';
   imports: [IonInput, IonButton, IonSelect, IonSelectOption, IonContent, IonText, IonImg, CommonModule, FormsModule, ReactiveFormsModule]
 })
 
-export class LoginPage implements OnInit {//Verificação do formato de cpf e telefone
+export class LoginPage implements OnInit {
   private clienteService = inject(clienteService);
   private administradorService = inject(administradorService);
   private prestadorService = inject(prestadorService);
+  private autenticacaoService = inject(autenticacaoService);
   private router = inject(Router);
   private formBuilder = inject(NonNullableFormBuilder);
-  private toastController = inject(ToastController); 
+  private toastController = inject(ToastController);
   protected modo: 'login' | 'cadastro' = 'login';
   protected cadastroUsuarioForm = this.formBuilder.group({
     CPF: ['',[Validators.required, Validators.minLength(11), Validators.maxLength(14)]],
@@ -48,7 +50,6 @@ export class LoginPage implements OnInit {//Verificação do formato de cpf e te
       position: 'bottom',
       color: 'primary'
     });
-
     await toast.present();
   }
 
@@ -65,53 +66,66 @@ export class LoginPage implements OnInit {//Verificação do formato de cpf e te
     return 'Desconhecido';
   }
   
-  protected async login(){
-    const cliente = this.clienteService.obterClientePorNome(this.loginForm.get('Nome')!.value);
-    const administrador = this.administradorService.obterAdministradorPorNome(this.loginForm.get('Nome')!.value);
-    const prestador = this.prestadorService.obterPrestadorPorNome(this.loginForm.get('Nome')!.value);
+  protected async login() {
+    const nome = this.loginForm.get('Nome')?.value?.trim() ?? '';
+    const senha = this.loginForm.get('Senha')?.value ?? '';
 
-    const usuario = cliente ?? administrador ?? prestador; // ?? serve para retornar o primeiro valor não nulo ou indefinido
+    const usuario = this.autenticacaoService.autenticar(nome, senha);
 
-    if (usuario && usuario.Senha === this.loginForm.get('Senha')!.value) {
+    if (usuario) {
       const tipoUsuario = this.identificarTipoUsuario(usuario);
       await this.mostrarToast(`Login ${tipoUsuario} bem sucedido`);
-      this.router.navigate(['/perfil'], { state: { usuario: usuario } }); // Navega para a página do perfil e passa o objeto do usuário como estado
+      this.router.navigate(['/perfil']);
       return;
     }
+
     await this.mostrarToast('Login falhou: Nome de usuario ou senha incorretos');
   }
 
   protected async cadastrarUsuario() {
+    const tipoUsuario = this.cadastroUsuarioForm.value.TipoUsuario as 'Cliente' | 'Prestador' | null;
     const usuario = {
       id: this.clienteService.criarNovoID(),
-      CPF: this.cadastroUsuarioForm.value.CPF!,
-      Nome: this.cadastroUsuarioForm.value.Nome!,
-      Telefone: this.cadastroUsuarioForm.value.Telefone!,
-      Email: this.cadastroUsuarioForm.value.Email!,
-      Senha: this.cadastroUsuarioForm.value.Senha!,
-      tipoUsuario: this.cadastroUsuarioForm.value.TipoUsuario! as 'Cliente' | 'Administrador' | 'Prestador',
-    };
-    if (usuario.tipoUsuario === 'Cliente') {
-      if(this.clienteService.verificarCPF(usuario.CPF)){
+      CPF: this.cadastroUsuarioForm.value.CPF ?? '',
+      Nome: this.cadastroUsuarioForm.value.Nome ?? '',
+      Telefone: this.cadastroUsuarioForm.value.Telefone ?? '',
+      Email: this.cadastroUsuarioForm.value.Email ?? '',
+      Senha: this.cadastroUsuarioForm.value.Senha ?? '',
+      tipoUsuario,
+    } as Usuario;
+
+    if (!tipoUsuario) {
+      await this.mostrarToast('Selecione um tipo de usuário');
+      return;
+    }
+
+    if (tipoUsuario === 'Cliente') {
+      if (this.clienteService.verificarCPF(usuario.CPF)) {
         await this.mostrarToast('CPF do cliente já registrado');
         return;
       }
+
       this.clienteService.adicionar(usuario);
-      await this.mostrarToast(`Cadastro do ${usuario.tipoUsuario} bem sucedido`);
-      this.router.navigate(['/home'], { state: { usuario: usuario } });
+      this.autenticacaoService.definirUsuarioAtual(usuario);
+      await this.mostrarToast(`Cadastro do ${tipoUsuario} bem sucedido`);
+      this.router.navigate(['/home']);
       return;
-    } else if (usuario.tipoUsuario === 'Prestador') {
-      if(this.prestadorService.verificarCPF(usuario.CPF)){
+    }
+
+    if (tipoUsuario === 'Prestador') {
+      if (this.prestadorService.verificarCPF(usuario.CPF)) {
         await this.mostrarToast('CPF do prestador já registrado');
         return;
       }
+
       this.prestadorService.adicionar(usuario);
-      await this.mostrarToast(`Cadastro do ${usuario.tipoUsuario} bem sucedido`);
-      this.router.navigate(['/home'], { state: { usuario: usuario } });
+      this.autenticacaoService.definirUsuarioAtual(usuario);
+      await this.mostrarToast(`Cadastro do ${tipoUsuario} bem sucedido`);
+      this.router.navigate(['/home']);
       return;
-    } else {
-      await this.mostrarToast('Erro');
     }
+
+    await this.mostrarToast('Tipo de usuário inválido');
   }
   
   ngOnInit(){}

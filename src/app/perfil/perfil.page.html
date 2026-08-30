@@ -9,25 +9,25 @@
 <ion-content [fullscreen]="true">
 <div class="img">
   <img
-    [src]="usuario"
+    [src]="fotoPerfil"
     alt="Foto do Usuário"
     (error)="imagemErro($event)"
   >
-<p><strong>{{ usuario.Nome ?? 'N/A' }}</strong></p>
+<p><strong>{{ usuario?.Nome ?? 'N/A' }}</strong></p>
 </div>
   <div id="classificacao">{{ tipoUsuario || 'USUÁRIO' }}</div>
   
   <div class="perfil-container">
     <div class="infos">
       <div class="dados">
-        <p><strong>ID:</strong> {{ usuario.id ?? 'N/A' }}</p>
-        <p><strong>CPF:</strong> {{ usuario.CPF ?? 'N/A' }}</p>
-        <p><strong>EMAIL:</strong> {{ usuario.Email ?? 'N/A' }}</p>
-        <p><strong>TELEFONE:</strong> {{ usuario.Telefone ?? 'N/A' }}</p>
+        <p><strong>ID:</strong> {{ usuario?.id ?? 'N/A' }}</p>
+        <p><strong>CPF:</strong> {{ usuario?.CPF ?? 'N/A' }}</p>
+        <p><strong>EMAIL:</strong> {{ usuario?.Email ?? 'N/A' }}</p>
+        <p><strong>TELEFONE:</strong> {{ usuario?.Telefone ?? 'N/A' }}</p>
       </div>
     </div>
     <ion-button id="editar" (click)="setOpen(true)">EDITAR</ion-button>
-    <ion-button id="suporte">SUPORTE</ion-button>
+    <ion-button id="suporte" (click)="goToConfig()">CONFIGURAÇÕES</ion-button>
   </div>
 
   <ion-modal [isOpen]="estaAberto">
@@ -45,9 +45,9 @@
         <!-- Formulário de edição de perfil -->
 
         <div class="ion-padding">
-          <ion-input placeholder="Nome" [(ngModel)]="usuario.Nome"></ion-input>
-          <ion-input placeholder="Email" [(ngModel)]="usuario.Email"></ion-input>
-          <ion-input placeholder="Telefone" [(ngModel)]="usuario.Telefone"></ion-input>
+          <ion-input placeholder="Nome" [(ngModel)]="usuarioEdicao.Nome"></ion-input>
+          <ion-input placeholder="Email" [(ngModel)]="usuarioEdicao.Email"></ion-input>
+          <ion-input placeholder="Telefone" [(ngModel)]="usuarioEdicao.Telefone"></ion-input>
         </div>
 
           <ion-button color="danger" class="botao-excluir" (click)="excluirPerfil()" position="bottom">Excluir Perfil</ion-button>
@@ -55,8 +55,11 @@
     </ng-template>
   </ion-modal>
 
+  <ion-button id="logout" (click)="logout()">LOGOUT</ion-button>
+  <ion-button id="excluir" (click)="excluirPerfil()">EXCLUIR PERFIL</ion-button>
+
   <div id="nav-bar">
-    <ion-button (click)="goToLista()"
+    <ion-button (click)="goToHome()"
       ><img src="../../assets/imgs/Lista - Icon.png" alt="" height="66px"
     /></ion-button>
 

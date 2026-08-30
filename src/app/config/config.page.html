@@ -1,0 +1,43 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Configurações</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding settings-page">
+  <section class="settings-card">
+    <h2>Preferências</h2>
+
+    <div class="setting-row">
+      <div>
+        <h3>Notificações</h3>
+        <p>Receber avisos sobre agendamentos e atualizações.</p>
+      </div>
+      <ion-toggle
+        [checked]="notificacoesAtivas"
+        (ionChange)="toggleNotificacoes($event)">
+      </ion-toggle>
+    </div>
+
+    <div class="setting-row">
+      <div>
+        <h3>Modo escuro</h3>
+        <p>Melhor contraste para uso em ambientes com pouca luz.</p>
+      </div>
+      <ion-toggle
+        [checked]="modoEscuro"
+        (ionChange)="toggleModoEscuro($event)">
+      </ion-toggle>
+    </div>
+  </section>
+
+  <div class="actions">
+    <ion-button expand="block" color="primary" (click)="voltarParaPerfil()">
+      Voltar para perfil
+    </ion-button>
+
+    <ion-button expand="block" color="danger" fill="outline" (click)="logout()">
+      Sair da conta
+    </ion-button>
+  </div>
+</ion-content>

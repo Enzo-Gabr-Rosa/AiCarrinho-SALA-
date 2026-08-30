@@ -1,0 +1,62 @@
+:host {
+  display: block;
+}
+
+.prestador-page {
+  --background: #f4f5f8;
+}
+
+.header-card,
+.panel {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1rem;
+}
+
+.header-card h2,
+.panel h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.header-card p,
+.empty-state,
+.servico-card p,
+.servico-card span {
+  margin: 0;
+  color: #475467;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.servico-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 0.85rem;
+  background: #f9fafb;
+  margin-top: 0.75rem;
+}
+
+.servico-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.servico-header h4 {
+  margin: 0;
+}
+
+.footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}

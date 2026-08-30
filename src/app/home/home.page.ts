@@ -7,6 +7,7 @@ import { agendamentoService } from '../Services/agendamento-service';
 import { Servico } from '../Modelos/servico-modelo';
 import { Cliente } from '../Modelos/cliente-modelo';
 import { ToastController } from '@ionic/angular';
+import { autenticacaoService } from '../Services/autenticacao-service';
 
 @Component({
   selector: 'app-home',
@@ -19,19 +20,26 @@ export class HomePage { //Implementar clicar no card do prestador e ser levado a
   private prestadorService: prestadorService = inject(prestadorService);
   private agendamentoService: agendamentoService = inject(agendamentoService);
   protected prestadores: readonly Prestador[] = [];
-  protected servicos: readonly Servico[] = [];
   private router = inject(Router);
   private toastController = inject(ToastController);
-  protected usuario:Cliente;
-  
+  private autenticacaoService = inject(autenticacaoService);
+  protected usuario: Cliente | null = null;
+
   constructor() {
-    this.usuario = this.router.currentNavigation()?.extras.state?.['usuario'] ?? null;
+    this.usuario = this.autenticacaoService.obterUsuarioAtual() as Cliente | null;
+    if (!this.usuario) {
+      this.router.navigate(['/login']);
+    }
   }
   ionViewWillEnter() {
     this.prestadores = this.prestadorService.obterPrestadores();
-    this.servicos = this.prestadorService.obterServicos();
   }
   async agendarServico(prestador: Prestador, servico: Servico) {
+    if (!this.usuario || this.usuario.tipoUsuario !== 'Cliente') {
+      await this.mostrarToast('Apenas clientes podem agendar serviços.');
+      return;
+    }
+
     const agendamento = {
       id:this.agendamentoService.obterAgendamentos().length + 1,
       idCliente: this.usuario.id,
@@ -52,7 +60,15 @@ export class HomePage { //Implementar clicar no card do prestador e ser levado a
   }
 
   goToPerfil() {
-    this.router.navigate(['/perfil'], { state: { usuario: this.usuario } });
+    this.router.navigate(['/perfil']);
+  }
+
+  goToAgendamentos() {
+    this.router.navigate(['/agendamentos']);
+  }
+
+  goToPrestadorDashboard() {
+    this.router.navigate(['/prestador']);
   }
 
   protected formatTime(horario: Date | string): string {
