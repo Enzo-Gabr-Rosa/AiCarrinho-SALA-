@@ -1,7 +1,7 @@
 {
   "clientes": [
     {
-      "id": 1,
+      "id": "1",
       "CPF": "12345678900",
       "Nome": "Maria",
       "Telefone": "11999999999",
@@ -12,7 +12,7 @@
   ],
   "prestadores": [
     {
-      "id": 1,
+      "id": "1",
       "CPF": "11122233344",
       "Nome": "João",
       "Telefone": "11888888888",
@@ -29,11 +29,55 @@
         }
       ],
       "tipoUsuario": "Prestador"
+    },
+    {
+      "id": "yhu9DUhMIg0",
+      "CPF": "11141414141",
+      "Nome": "asdas",
+      "Telefone": "1111414111",
+      "Email": "",
+      "Senha": "41414141",
+      "Descricao": "",
+      "Servicos": [],
+      "tipoUsuario": "Prestador"
+    },
+    {
+      "id": "FCv0NA8fqJA",
+      "CPF": "44444444444",
+      "Nome": "7777",
+      "Telefone": "44444444444444444",
+      "Email": "",
+      "Senha": "4444444",
+      "Descricao": "",
+      "Servicos": [],
+      "tipoUsuario": "Prestador"
+    },
+    {
+      "id": "gSxYQeBsYng",
+      "CPF": "12312312312",
+      "Nome": "asdasd",
+      "Telefone": "123123123133333",
+      "Email": "",
+      "Senha": "asdadsada",
+      "Descricao": "",
+      "Servicos": [],
+      "tipoUsuario": "Prestador"
+    },
+    {
+      "id": "pt0ZEePSz3I",
+      "CPF": "12312312319",
+      "Nome": "sdasd",
+      "Telefone": "11312313123232323",
+      "Email": "",
+      "Senha": "sdfsfsfs",
+      "Descricao": "",
+      "Servicos": [],
+      "tipoUsuario": "Prestador"
     }
   ],
   "agendamentos": [
     {
-      "id": 1,
+      "id": "1",
       "idCliente": 1,
       "idPrestador": 1,
       "idServico": 1,
@@ -41,5 +85,6 @@
       "horarioFim": "2026-08-29T11:00:00",
       "status": "Pendente"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

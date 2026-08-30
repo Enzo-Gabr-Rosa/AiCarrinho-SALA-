@@ -19,7 +19,6 @@ export class PerfilPage implements OnInit {
   private router = inject(Router);
   private clienteService = inject(clienteService);
   private autenticacaoService = inject(autenticacaoService);
-
   protected usuario: Usuario | null = null;
   protected usuarioEdicao: Partial<Usuario> = {};
   protected tipoUsuario = 'Usuário';
@@ -34,20 +33,7 @@ export class PerfilPage implements OnInit {
     }
 
     this.usuarioEdicao = { ...this.usuario };
-    this.tipoUsuario = this.identificarTipoUsuario(this.usuario);
-  }
-
-  private identificarTipoUsuario(usuario: Usuario): string {
-    if (usuario.tipoUsuario === 'Cliente') {
-      return 'Cliente';
-    }
-    if (usuario.tipoUsuario === 'Administrador') {
-      return 'Administrador';
-    }
-    if (usuario.tipoUsuario === 'Prestador') {
-      return 'Prestador';
-    }
-    return 'Usuário';
+    this.tipoUsuario = this.usuario.tipoUsuario;
   }
 
   goToHome() {
@@ -102,6 +88,9 @@ export class PerfilPage implements OnInit {
 
   protected logout() {
     this.autenticacaoService.limparSessao();
+    this.usuario = null;
+    this.usuarioEdicao = {};
+    this.tipoUsuario = 'Usuário';
     this.router.navigate(['/login']);
   }
 

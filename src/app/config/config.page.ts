@@ -14,7 +14,6 @@ import { autenticacaoService } from '../Services/autenticacao-service';
 export class ConfigPage {
   private router = inject(Router);
   private autenticacaoService = inject(autenticacaoService);
-
   protected notificacoesAtivas = this.obterPreferencia('notificacoesAtivas', true);
   protected modoEscuro = this.obterPreferencia('modoEscuro', false);
 

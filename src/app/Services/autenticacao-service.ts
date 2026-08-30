@@ -12,7 +12,6 @@ export class autenticacaoService {
   private administradorService = inject(administradorService);
   private prestadorService = inject(prestadorService);
   private readonly STORAGE_KEY = 'sala-usuario-atual';
-
   private usuarioAtual: Usuario | null = null;
 
   public obterUsuarioAtual(): Usuario | null {
@@ -21,25 +20,21 @@ export class autenticacaoService {
       if (!usuarioSalvo) {
         return null;
       }
-
       try {
         this.usuarioAtual = JSON.parse(usuarioSalvo) as Usuario;
       } catch {
         this.limparSessao();
       }
     }
-
     return this.usuarioAtual;
   }
 
   public definirUsuarioAtual(usuario: Usuario | null): void {
     this.usuarioAtual = usuario;
-
     if (!usuario) {
       localStorage.removeItem(this.STORAGE_KEY);
       return;
     }
-
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuario));
   }
 
@@ -50,16 +45,14 @@ export class autenticacaoService {
 
   public autenticar(nome: string, senha: string): Usuario | null {
     const usuario = this.obterUsuarioPorNome(nome);
-
     if (!usuario || usuario.Senha !== senha) {
       return null;
     }
-
     this.usuarioAtual = usuario;
     return usuario;
   }
 
-  public obterUsuarioPorNome(nome: string): Usuario | null {
+  public obterUsuarioPorNome(nome: string): Usuario | null { //?? executa o segundo comando caso o primeiro seja null ou undefined
     const usuario =
       this.clienteService.obterClientePorNome(nome) ??
       this.administradorService.obterAdministradorPorNome(nome) ??
@@ -69,6 +62,9 @@ export class autenticacaoService {
   }
 
   public estaLogado(): boolean {
-    return !!this.usuarioAtual;
+    if(!this.usuarioAtual) {
+      return false;
+    }
+    return true;
   }
 }

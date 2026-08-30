@@ -14,7 +14,7 @@ export class prestadorService {
   private http = inject(HttpClient);
   private prestadores: Prestador[] = [];
   private exclusaoService: UsuarioExclusao = inject(UsuarioExclusao);
-  private api = `${environment.api}/pretadores`; 
+  private api = `${environment.api}/prestadores`; 
 
   constructor() {
     this.carregarPrestadores();

@@ -29,9 +29,9 @@ export class LoginPage implements OnInit {
   private toastController = inject(ToastController);
   protected modo: 'login' | 'cadastro' = 'login';
   protected cadastroUsuarioForm = this.formBuilder.group({
-    CPF: ['',[Validators.required, Validators.minLength(11), Validators.maxLength(14)]],
+    CPF: ['',[Validators.required, Validators.minLength(11), Validators.maxLength(14), Validators.pattern(/^\d{11}$|^\d{3}\.\d{3}\.\d{3}-\d{2}$/)]],
     Nome: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-    Telefone: ['',[Validators.required, Validators.minLength(10), Validators.maxLength(15)]],
+    Telefone: ['',[Validators.required, Validators.minLength(10), Validators.maxLength(16)],Validators.pattern(/^\(\d{2}\)\s?\d{4,5}-?\d{4}$|^\d{10,11}$/)],
     Email: ['',[Validators.email, Validators.maxLength(100)]],
     Senha: ['',[Validators.required, Validators.minLength(6), Validators.maxLength(45)]],
     TipoUsuario: ['', [Validators.required]]
@@ -52,28 +52,16 @@ export class LoginPage implements OnInit {
     });
     await toast.present();
   }
-
-  private identificarTipoUsuario(usuario: Usuario): string {
-    if (usuario.tipoUsuario === 'Cliente') {
-      return 'Cliente';
-    }
-    if (usuario.tipoUsuario === 'Administrador') {
-      return 'Administrador';
-    }
-    if (usuario.tipoUsuario === 'Prestador') {
-      return 'Prestador';
-    }
-    return 'Desconhecido';
-  }
   
   protected async login() {
     const nome = this.loginForm.get('Nome')?.value?.trim() ?? '';
     const senha = this.loginForm.get('Senha')?.value ?? '';
 
     const usuario = this.autenticacaoService.autenticar(nome, senha);
+    console.log("Usuario autenticado:", usuario);
 
     if (usuario) {
-      const tipoUsuario = this.identificarTipoUsuario(usuario);
+      const tipoUsuario = usuario.tipoUsuario;
       await this.mostrarToast(`Login ${tipoUsuario} bem sucedido`);
       this.router.navigate(['/perfil']);
       return;
@@ -93,7 +81,7 @@ export class LoginPage implements OnInit {
       Senha: this.cadastroUsuarioForm.value.Senha ?? '',
       tipoUsuario,
     } as Usuario;
-
+    console.log("Tentando cadastrar usuário:", usuario);
     if (!tipoUsuario) {
       await this.mostrarToast('Selecione um tipo de usuário');
       return;
@@ -104,7 +92,6 @@ export class LoginPage implements OnInit {
         await this.mostrarToast('CPF do cliente já registrado');
         return;
       }
-
       this.clienteService.adicionar(usuario);
       this.autenticacaoService.definirUsuarioAtual(usuario);
       await this.mostrarToast(`Cadastro do ${tipoUsuario} bem sucedido`);
@@ -117,11 +104,10 @@ export class LoginPage implements OnInit {
         await this.mostrarToast('CPF do prestador já registrado');
         return;
       }
-
       this.prestadorService.adicionar(usuario);
       this.autenticacaoService.definirUsuarioAtual(usuario);
       await this.mostrarToast(`Cadastro do ${tipoUsuario} bem sucedido`);
-      this.router.navigate(['/home']);
+      this.router.navigate(['/perfil']);
       return;
     }
 

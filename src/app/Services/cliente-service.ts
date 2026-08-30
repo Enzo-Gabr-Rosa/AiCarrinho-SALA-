@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Cliente } from '../Modelos/cliente-modelo';
 import { Clientes } from 'src/TesteDatabase/Clientes';
 import { UsuarioExclusao } from './exclusao-service';
 import { Usuario } from '../Modelos/usuario-modelo';
 import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
