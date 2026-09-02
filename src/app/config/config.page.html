@@ -1,6 +1,11 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Configurações</ion-title>
+    <ion-title>
+      Configurações
+    </ion-title>
+      <ion-button class="voltar" (click)="voltarParaPerfil()">
+        <ion-icon name="close-outline" class="icone-branco"></ion-icon>
+      </ion-button>
   </ion-toolbar>
 </ion-header>
 
@@ -14,8 +19,8 @@
         <p>Receber avisos sobre agendamentos e atualizações.</p>
       </div>
       <ion-toggle
-        [checked]="notificacoesAtivas"
-        (ionChange)="toggleNotificacoes($event)">
+      [checked]="notificacoesAtivas"
+      (ionChange)="toggleNotificacoes($event)">
       </ion-toggle>
     </div>
 
@@ -32,9 +37,6 @@
   </section>
 
   <div class="actions">
-    <ion-button expand="block" color="primary" (click)="voltarParaPerfil()">
-      Voltar para perfil
-    </ion-button>
 
     <ion-button expand="block" color="danger" fill="outline" (click)="logout()">
       Sair da conta

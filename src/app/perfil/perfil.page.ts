@@ -36,10 +36,6 @@ export class PerfilPage implements OnInit {
     this.tipoUsuario = this.usuario.tipoUsuario;
   }
 
-  goToHome() {
-    this.router.navigate(['/home']);
-  }
-
   goToConfig() {
     this.router.navigate(['/config']);
   }

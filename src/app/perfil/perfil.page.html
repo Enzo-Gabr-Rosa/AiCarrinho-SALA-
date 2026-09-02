@@ -1,22 +1,16 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title id="titulo-perfil"
-      >PERFIL - {{ usuario?.Nome || 'USUÁRIO' }}</ion-title
-    >
+    <ion-title id="titulo-perfil">PERFIL - {{ usuario?.Nome || 'USUÁRIO' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-<div class="img">
-  <img
-    [src]="fotoPerfil"
-    alt="Foto do Usuário"
-    (error)="imagemErro($event)"
-  >
-<p><strong>{{ usuario?.Nome ?? 'N/A' }}</strong></p>
-</div>
+  <div class="img">
+    <img [src]="fotoPerfil" alt="Foto do Usuário" (error)="imagemErro($event)">
+    <p><strong>{{ usuario?.Nome ?? 'N/A' }}</strong></p>
+  </div>
   <div id="classificacao">{{ tipoUsuario || 'USUÁRIO' }}</div>
-  
+
   <div class="perfil-container">
     <div class="infos">
       <div class="dados">
@@ -26,8 +20,11 @@
         <p><strong>TELEFONE:</strong> {{ usuario?.Telefone ?? 'N/A' }}</p>
       </div>
     </div>
-    <ion-button id="editar" (click)="setOpen(true)">EDITAR</ion-button>
-    <ion-button color="primary" id="suporte" (click)="goToConfig()">CONFIGURAÇÕES</ion-button>
+    <div>
+      <ion-button class="botoes-perfil" id="editar" (click)="setOpen(true)">EDITAR INFORMAÇÕES</ion-button>
+      <ion-button class="botoes-perfil" id="logout" (click)="logout()">LOGOUT</ion-button>
+      <ion-button class="botoes-perfil" id="configuracoes" (click)="goToConfig()">CONFIGURAÇÕES</ion-button>
+    </div>
   </div>
 
   <ion-modal [isOpen]="estaAberto">
@@ -42,6 +39,7 @@
             <ion-button (click)="editarPerfil()" [strong]="true">Salvar</ion-button>
           </ion-buttons>
         </ion-toolbar>
+
         <!-- Formulário de edição de perfil -->
 
         <div class="ion-padding">
@@ -50,23 +48,12 @@
           <ion-input placeholder="Telefone" [(ngModel)]="usuarioEdicao.Telefone"></ion-input>
         </div>
 
-          <ion-button color="danger" class="botao-excluir" (click)="excluirPerfil()" position="bottom">Excluir Perfil</ion-button>
+        <ion-button color="danger" class="botao-excluir" (click)="excluirPerfil()" position="bottom">Excluir
+          Perfil</ion-button>
       </div>
     </ng-template>
   </ion-modal>
 
-  <ion-button color="danger" id="logout" (click)="logout()">LOGOUT</ion-button>
 
-  <div id="nav-bar">
-    <ion-button (click)="goToHome()"
-      ><img src="../../assets/imgs/Lista - Icon.png" alt="" height="66px"
-    /></ion-button>
 
-    <ion-button
-      ><img
-        src="../../assets/imgs/Perfil - Icon - Active.png"
-        alt=""
-        height="66px"
-    /></ion-button>
-  </div>
 </ion-content>
