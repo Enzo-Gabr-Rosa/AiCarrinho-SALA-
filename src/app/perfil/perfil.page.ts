@@ -31,13 +31,25 @@ export class PerfilPage implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
-
+    this.usuarioEdicao = { ...this.usuario };
+    this.tipoUsuario = this.usuario.tipoUsuario;
+  }
+  ionViewWillEnter() {
+    this.usuario = this.autenticacaoService.obterUsuarioAtual();
+    if (!this.usuario) {
+      this.router.navigate(['/login']);
+      return;
+    }
     this.usuarioEdicao = { ...this.usuario };
     this.tipoUsuario = this.usuario.tipoUsuario;
   }
 
   goToConfig() {
     this.router.navigate(['/config']);
+  }
+
+  goToAgendamentos(){
+    this.router.navigate(['/agendamentos']);
   }
 
   goToPrestadorDashboard() {

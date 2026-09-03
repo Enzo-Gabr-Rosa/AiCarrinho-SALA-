@@ -1,29 +1,33 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonModal, IonButtons, IonInput } from '@ionic/angular/standalone';
 import { Agendamento } from '../Modelos/agendamento-modelo';
 import { Prestador } from '../Modelos/prestador-modelo';
 import { Servico } from '../Modelos/servico-modelo';
 import { agendamentoService } from '../Services/agendamento-service';
 import { autenticacaoService } from '../Services/autenticacao-service';
 import { prestadorService } from '../Services/prestador-service';
+import { Usuario } from '../Modelos/usuario-modelo';
+
 
 @Component({
   selector: 'app-agendamentos',
   templateUrl: './agendamentos.page.html',
   styleUrls: ['./agendamentos.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButton, CommonModule],
+  imports: [IonInput, IonButtons, IonModal, IonContent, IonHeader, IonTitle, IonToolbar, IonButton, CommonModule],
 })
 export class AgendamentosPage {
   private router = inject(Router);
   private autenticacaoService = inject(autenticacaoService);
   private agendamentoService = inject(agendamentoService);
   private prestadorService = inject(prestadorService);
-
+  protected estaAberto = false;
+  protected usuarioEdicao: Partial<Usuario> = {};
   protected usuario: { id: number; Nome: string; tipoUsuario: 'Cliente' | 'Prestador' | 'Administrador' } | null = null;
   protected agendamentos: Agendamento[] = [];
+  protected tipoUsuario = 'Usuário';
 
   constructor() {
     this.usuario = this.autenticacaoService.obterUsuarioAtual();
@@ -53,6 +57,10 @@ export class AgendamentosPage {
       this.carregarAgendamentos();
     }
   }
+  protected cadastrarServico() {
+    // this.router.navigate(['/prestador']);//
+    this.setOpen(false);
+  }
 
   protected getPrestadorPorId(idPrestador: number): Prestador | undefined {
     return this.prestadorService.obterPrestadorPorId(idPrestador);
@@ -76,6 +84,7 @@ export class AgendamentosPage {
 
     if (this.usuario.tipoUsuario === 'Cliente') {
       this.agendamentos = this.agendamentoService.obterAgendamentosPorCliente(this.usuario.id);
+      console.log()
       return;
     }
 
@@ -85,5 +94,12 @@ export class AgendamentosPage {
     }
 
     this.agendamentos = this.agendamentoService.obterAgendamentos();
+  }
+  
+  setOpen(isOpen: boolean) {
+    this.estaAberto = isOpen;
+    if (isOpen && this.usuario) {
+      this.usuarioEdicao = { ...this.usuario };
+    }
   }
 }

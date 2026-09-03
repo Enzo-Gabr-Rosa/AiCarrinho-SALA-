@@ -73,8 +73,8 @@ export class agendamentoService {
       idCliente: novoAgendamento.idCliente,
       idPrestador: novoAgendamento.idPrestador,
       idServico: novoAgendamento.idServico,
-      horarioInicio: novoAgendamento.horarioInicio.toISOString(),
-      horarioFim: novoAgendamento.horarioFim.toISOString(),
+      horarioInicio: novoAgendamento.horarioInicio,
+      horarioFim: novoAgendamento.horarioFim,
       status: novoAgendamento.status
     }).subscribe({
       next: () => {

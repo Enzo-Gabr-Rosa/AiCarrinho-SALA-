@@ -52,6 +52,7 @@ export class HomePage { //Implementar clicar no card do prestador e ser levado a
     const sucesso = this.agendamentoService.adicionar(
       agendamento
     );
+    console.log( `Agendamento ${sucesso ? 'realizado' : 'falhou'}:`, agendamento);
     if (sucesso) {
       await this.mostrarToast('Agendamento realizado com sucesso!');
     } else {

@@ -41,6 +41,24 @@
       }
     </section>
   }
+  @if(tipoUsuario === 'Prestador') {
+    <ion-button expand="block" (click)="setOpen(true)">Cadastrar Serviço</ion-button>
+  }
+  <ion-modal [isOpen]="estaAberto">
+    <ng-template>
+      <div class="modal-content">
+        <ion-toolbar class=>
+          <ion-buttons slot="start">
+            <ion-button (click)="setOpen(false)">Cancelar</ion-button>
+          </ion-buttons>
+          <ion-title>Modal...</ion-title>
+          <ion-button expand="block" (click)="cadastrarServico()" [strong]="true">Cadastrar Serviço</ion-button>
+        </ion-toolbar>
+
+
+      </div>
+    </ng-template>
+  </ion-modal>
 
   <div class="footer-actions">
     <ion-button expand="block" (click)="voltarParaHome()">Voltar para início</ion-button>

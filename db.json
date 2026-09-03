@@ -8,6 +8,15 @@
       "Email": "maria@email.com",
       "Senha": "123456",
       "tipoUsuario": "Cliente"
+    },
+    {
+      "id": "H5_8bm4NNG8",
+      "CPF": "77777777777",
+      "Nome": "asdasda",
+      "Telefone": "7777777777777777",
+      "Email": "",
+      "Senha": "aaaaaaa",
+      "tipoUsuario": "Cliente"
     }
   ],
   "prestadores": [
@@ -84,6 +93,15 @@
       "horarioInicio": "2026-08-29T09:00:00",
       "horarioFim": "2026-08-29T11:00:00",
       "status": "Pendente"
+    },
+    {
+      "id": "dy7tvxDPQdM",
+      "idCliente": "1",
+      "idPrestador": "1",
+      "idServico": 1,
+      "horarioInicio": "2026-08-29T09:00:00",
+      "horarioFim": "2026-08-29T11:00:00",
+      "status": "Cancelado"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
