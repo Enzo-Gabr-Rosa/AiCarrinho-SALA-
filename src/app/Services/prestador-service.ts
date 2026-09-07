@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Prestador} from '../Modelos/prestador-modelo';
-import { PrestadoresServicos } from 'src/TesteDatabase/Prestadores-Servicos';
 import { Servico } from '../Modelos/servico-modelo';
 import { UsuarioExclusao } from './exclusao-service';
 import { Usuario } from '../Modelos/usuario-modelo';
@@ -36,7 +35,7 @@ export class prestadorService {
       },
       error: () => {
         // Fallback para dados locais se a API não estiver disponível
-        this.prestadores = PrestadoresServicos;
+        this.prestadores = [];
       }
     });
   }

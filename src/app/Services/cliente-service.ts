@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import { Cliente } from '../Modelos/cliente-modelo';
-import { Clientes } from 'src/TesteDatabase/Clientes';
 import { UsuarioExclusao } from './exclusao-service';
 import { Usuario } from '../Modelos/usuario-modelo';
 import { environment } from 'src/environments/environment';
@@ -25,7 +24,7 @@ export class clienteService {
         this.clientes = dados.map(d => new Cliente(d.id, d.CPF, d.Nome, d.Telefone, d.Email, d.Senha));
       },
       error: () => {
-        this.clientes = Clientes;
+        this.clientes = [];
       }
     });
   }
@@ -56,8 +55,7 @@ export class clienteService {
       Nome: cliente.Nome,
       Telefone: cliente.Telefone,
       Email: cliente.Email,
-      Senha: cliente.Senha,
-      tipoUsuario: cliente.tipoUsuario
+      Senha: cliente.Senha
     }).subscribe({
       next: () => {
         this.clientes.push(cliente);

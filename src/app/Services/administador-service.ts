@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { Administradores } from 'src/TesteDatabase/Administradores';
+import { HttpClient } from '@angular/common/http';
 import { Administrador } from '../Modelos/administrador-modelo';
 import { UsuarioExclusao } from './exclusao-service';
 import { Usuario } from '../Modelos/usuario-modelo';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +11,29 @@ import { Usuario } from '../Modelos/usuario-modelo';
 export class administradorService {
   private administradores: Administrador[] = [];
   private exclusaoService: UsuarioExclusao = inject(UsuarioExclusao);
+  private http = inject(HttpClient);
+  private api = `${environment.api}/administradores`;
+
   constructor() {
-    this.administradores = Administradores;
+    this.carregarAdministradores();
+  }
+
+  private carregarAdministradores() {
+    this.http.get<Administrador[]>(this.api).subscribe({
+      next: (dados) => {
+        this.administradores = dados.map(d => new Administrador(
+          d.id,
+          d.CPF,
+          d.Nome,
+          d.Telefone,
+          d.Email,
+          d.Senha
+        ));
+      },
+      error: () => {
+        this.administradores = [];
+      }
+    });
   }
 
   //Administrador
@@ -31,12 +53,18 @@ export class administradorService {
       if(this.verificarExistencia(usuario)){
       return false;
       }
-      this.administradores.push(administrador);
-      if(tamanhoAnterior < this.administradores.length){
-          return true;
-      }else {
-          return false;
-      }
+      this.http.post<Administrador>(this.api, {
+        id: administrador.id,
+        CPF: administrador.CPF,
+        Nome: administrador.Nome,
+        Telefone: administrador.Telefone,
+        Email: administrador.Email,
+        Senha: administrador.Senha
+      }).subscribe({
+        next: () => this.administradores.push(administrador),
+        error: () => this.administradores.push(administrador)
+      });
+      return tamanhoAnterior < this.administradores.length + 1;
     }
     public excluir(administrador: Administrador): boolean {
       const usuarioExcluido = {
@@ -51,6 +79,7 @@ export class administradorService {
     };
 
     this.administradores.splice(this.administradores.indexOf(administrador), 1);
+    this.http.delete(`${this.api}/${administrador.id}`).subscribe();
     return this.exclusaoService.excluir(usuarioExcluido);
   }
   //Complementares

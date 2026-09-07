@@ -41,24 +41,31 @@
       }
     </section>
   }
-  @if(tipoUsuario === 'Prestador') {
-    <ion-button expand="block" (click)="setOpen(true)">Cadastrar Serviço</ion-button>
+  @if (tipoUsuario === 'Prestador') {
+    <ion-button expand="block" (click)="setOpen(true)">Cadastrar serviço</ion-button>
   }
-  <ion-modal [isOpen]="estaAberto">
+  @if (tipoUsuario === 'Prestador') {
+    <ion-modal [isOpen]="estaAberto">
     <ng-template>
       <div class="modal-content">
-        <ion-toolbar class=>
+        <ion-toolbar>
           <ion-buttons slot="start">
             <ion-button (click)="setOpen(false)">Cancelar</ion-button>
           </ion-buttons>
-          <ion-title>Modal...</ion-title>
-          <ion-button expand="block" (click)="cadastrarServico()" [strong]="true">Cadastrar Serviço</ion-button>
+          <ion-title>Novo serviço</ion-title>
         </ion-toolbar>
+        <form [formGroup]="servicoForm" (ngSubmit)="cadastrarServico()" class="servico-form">
+          <ion-input label="Nome do serviço" labelPlacement="stacked" formControlName="nome"></ion-input>
+          <ion-input label="Descrição" labelPlacement="stacked" formControlName="descricao"></ion-input>
+          <ion-input label="Início" labelPlacement="stacked" type="datetime-local" formControlName="horarioInicio"></ion-input>
+          <ion-input label="Fim" labelPlacement="stacked" type="datetime-local" formControlName="horarioFim"></ion-input>
 
-
+          <ion-button type="submit" expand="block">Cadastrar serviço</ion-button>
+        </form>
       </div>
     </ng-template>
-  </ion-modal>
+    </ion-modal>
+  }
 
   <div class="footer-actions">
     <ion-button expand="block" (click)="voltarParaHome()">Voltar para início</ion-button>
