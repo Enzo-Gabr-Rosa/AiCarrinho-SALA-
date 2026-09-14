@@ -108,6 +108,7 @@ export class AgendamentosPage {
 
     this.servicoForm.reset();
     this.setOpen(false);
+    this.carregarAgendamentos();
     await this.mostrarToast('Serviço cadastrado com sucesso.', 'success');
   }
 

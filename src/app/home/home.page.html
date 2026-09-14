@@ -11,7 +11,7 @@
       <article class="prestador-card">
         <header class="prestador-header">
           <div>
-            <h2>{{ prestador.Nome }}</h2>
+            <h2 (click)="goToPrestador()">{{ prestador.Nome }}</h2>
             <p class="descricao">{{ prestador.Descricao.trim() || 'Sem descrição cadastrada no momento.' }}</p>
           </div>
           <span class="chip">{{ prestador.Servicos.length || 0 }} serviços</span>
@@ -21,7 +21,7 @@
           <div class="servicos-lista">
             @for (servico of prestador.Servicos; track servico.id) {
               <article class="servico-card">
-                <h3>{{ servico.nome }}</h3>
+                <h3 >{{ servico.nome }}</h3>
                 <p>{{ servico.descricao }}</p>
                 <span class="horario">
                   Horário: {{ formatTime(servico.horarioInicio) }} às {{ formatTime(servico.horarioFim) }}
@@ -38,13 +38,4 @@
       </article>
     }
   </section>
-
-    <div id="nav-bar">
-
-    @if (usuario?.tipoUsuario === 'Prestador') {
-      <ion-button (click)="goToPrestadorDashboard()"><img src="../../assets/imgs/Perfil - Icon - Active.png" alt="" height="66px"></ion-button>
-    } @else {
-      <ion-button (click)="goToPerfil()"><img src="../../assets/imgs/Perfil - Icon.png" alt="" height="66px"></ion-button>
-    }
-  </div>
 </ion-content>

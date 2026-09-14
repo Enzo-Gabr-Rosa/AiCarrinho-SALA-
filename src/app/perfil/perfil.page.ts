@@ -24,6 +24,7 @@ export class PerfilPage implements OnInit {
   protected tipoUsuario = 'Usuário';
   protected estaAberto = false;
   protected fotoPerfil = 'assets/imgs/Foto User.png';
+  //Adicionar a descrição do usuário
 
   constructor() {
     this.usuario = this.autenticacaoService.obterUsuarioAtual();

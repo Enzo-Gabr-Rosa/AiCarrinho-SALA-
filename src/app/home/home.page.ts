@@ -68,7 +68,7 @@ export class HomePage { //Implementar clicar no card do prestador e ser levado a
     this.router.navigate(['/agendamentos']);
   }
 
-  goToPrestadorDashboard() {
+  goToPrestador() {
     this.router.navigate(['/prestador']);
   }
 
