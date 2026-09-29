@@ -61,6 +61,7 @@ export class LoginPage implements OnInit {
     console.log("Usuario autenticado:", usuario);
 
     if (usuario) {
+      this.autenticacaoService.definirUsuarioAtual(usuario);
       const tipoUsuario = usuario.tipoUsuario;
       await this.mostrarToast(`Login ${tipoUsuario} bem sucedido`);
       this.router.navigate(['/perfil']);

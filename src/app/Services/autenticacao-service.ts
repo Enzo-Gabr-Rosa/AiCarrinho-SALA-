@@ -21,7 +21,12 @@ export class autenticacaoService {
         return null;
       }
       try {
-        this.usuarioAtual = JSON.parse(usuarioSalvo) as Usuario;
+        const usuario: unknown = JSON.parse(usuarioSalvo);
+        if (!this.eUsuarioValido(usuario)) {
+          this.limparSessao();
+          return null;
+        }
+        this.usuarioAtual = usuario;
       } catch {
         this.limparSessao();
       }
@@ -48,7 +53,7 @@ export class autenticacaoService {
     if (!usuario || usuario.Senha !== senha) {
       return null;
     }
-    this.usuarioAtual = usuario;
+    this.definirUsuarioAtual(usuario);
     return usuario;
   }
 
@@ -62,9 +67,18 @@ export class autenticacaoService {
   }
 
   public estaLogado(): boolean {
-    if(!this.usuarioAtual) {
+    return this.obterUsuarioAtual() !== null;
+  }
+
+  private eUsuarioValido(valor: unknown): valor is Usuario {
+    if (typeof valor !== 'object' || valor === null) {
       return false;
     }
-    return true;
+
+    const usuario = valor as Partial<Usuario>;
+    return Number.isFinite(usuario.id) &&
+      (usuario.tipoUsuario === 'Cliente' ||
+        usuario.tipoUsuario === 'Administrador' ||
+        usuario.tipoUsuario === 'Prestador');
   }
 }
