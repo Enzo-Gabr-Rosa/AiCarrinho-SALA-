@@ -78,7 +78,7 @@ export class prestadorService {
         this.prestadores.push(prestador);
       },
       error: () => {
-        console.log('Erro ao adicionar prestador no servidor. Adicionando localmente.');
+        console.log('Erro ao adicionar prestador no servidor.');
       }
     });
     
@@ -98,18 +98,17 @@ export class prestadorService {
     };
     
     // Deletar do servidor
-    this.http.delete(`${this.api}/${prestador.id}`).subscribe({
+    this.http.delete(`${this.api}/${prestador.id}`).subscribe({//Tiro do servidor
       next: () => {
         const index = this.prestadores.indexOf(prestador);
         if (index > -1) {
-          this.prestadores.splice(index, 1);
+          this.prestadores.splice(index, 1); //Tiro da lista local
         }
       },
       error: () => {
         console.error('Erro ao excluir prestador no servidor.');
       }
     });
-    
     return this.exclusaoService.excluir(usuarioExcluido);
   }
   
@@ -270,7 +269,7 @@ export class prestadorService {
     });
   }
   
-  public validarHorarioSobreposto(idPrestador: number, horarioInicio: Date, horarioFim: Date): boolean {
+  public validarHorarioSobreposto(idPrestador: number, horarioInicio: Date, horarioFim: Date): boolean { //Redundancia com a função verificarHorariSobreposto, verificar junção e/ou exclusão
     const prestador = this.obterPrestadorPorId(idPrestador);
     if (!prestador) {
       return false;

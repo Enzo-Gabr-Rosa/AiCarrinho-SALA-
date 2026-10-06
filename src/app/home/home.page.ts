@@ -72,8 +72,9 @@ export class HomePage { //Implementar clicar no card do prestador e ser levado a
     this.router.navigate(['/prestador']);
   }
 
-  protected formatTime(horario: Date | string): string {
+  protected formatDate(horario: Date | string): string {
     const data = new Date(horario);
+    console.log('Data formatada:', `${String(data.getDate()).padStart(2, '0')}/${String(data.getMonth() + 1).padStart(2, '0')}/${data.getFullYear()} ${String(data.getHours()).padStart(2, '0')}:${String(data.getMinutes()).padStart(2, '0')}`);
     return `${String(data.getDate()).padStart(2, '0')}/${String(data.getMonth() + 1).padStart(2, '0')}/${data.getFullYear()} ${String(data.getHours()).padStart(2, '0')}:${String(data.getMinutes()).padStart(2, '0')}`;
   }
   private async mostrarToast(mensagem: string) {

@@ -8,6 +8,8 @@ import { prestadorService } from './prestador-service';
   providedIn: 'root',
 })
 export class autenticacaoService {
+  //Verificar a utilidade do proprio serviço de autenticação, pois ele apenas chama os outros serviços, talvez seja melhor utilizar apenas o guard de rotas para verificar se o usuário está logado e qual é o tipo dele, e utilizar os serviços de cliente, administrador e prestador para obter os dados do usuário
+  //Utilidade pode ser vista se e somente a ideia de se utilizar o sessionStorage
   private clienteService = inject(clienteService);
   private administradorService = inject(administradorService);
   private prestadorService = inject(prestadorService);

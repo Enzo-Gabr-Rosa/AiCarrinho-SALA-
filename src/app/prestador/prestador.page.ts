@@ -131,6 +131,7 @@ export class PrestadorPage {
 
   protected formatDate(data: Date | string): string {
     const value = new Date(data);
+    // Formata a data no formato DD/MM/YYYY HH:mm adicionando zeros à esquerda quando necessário
     return `${String(value.getDate()).padStart(2, '0')}/${String(value.getMonth() + 1).padStart(2, '0')}/${value.getFullYear()} ${String(value.getHours()).padStart(2, '0')}:${String(value.getMinutes()).padStart(2, '0')}`;
   }
 }

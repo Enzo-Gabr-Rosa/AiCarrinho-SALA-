@@ -99,7 +99,7 @@ export class agendamentoService {
     // Atualizar no servidor
     this.http.patch(`${this.api}/${id}`, {
       status: status
-    }).subscribe();
+    }).subscribe(); //Implementar tratamento de erro caso a atualização falhe com next e error
 
     return true;
   }

@@ -20,7 +20,7 @@ export class clienteService {
 
   private carregarClientes() {
     this.http.get<Cliente[]>(this.api).subscribe({
-      next: (dados) => {
+      next: (dados) => { //escrever as variaveis em arrow function de forma mais clara
         this.clientes = dados.map(d => new Cliente(d.id, d.CPF, d.Nome, d.Telefone, d.Email, d.Senha));
       },
       error: () => {

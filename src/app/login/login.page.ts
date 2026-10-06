@@ -20,6 +20,7 @@ import { animate } from 'animejs';
 })
 
 export class LoginPage implements OnInit {
+  //Implementar uma meelhor verificação da situação do telefone e do cpf
   private clienteService = inject(clienteService);
   private administradorService = inject(administradorService);
   private prestadorService = inject(prestadorService);
@@ -54,7 +55,7 @@ export class LoginPage implements OnInit {
   }
   
   protected async login() {
-    const nome = this.loginForm.get('Nome')?.value?.trim() ?? '';
+    const nome = this.loginForm.get('Nome')?.value?.trim() ?? ''; // Verifica se o valor é nulo ou indefinido e remove espaços em branco
     const senha = this.loginForm.get('Senha')?.value ?? '';
 
     const usuario = this.autenticacaoService.autenticar(nome, senha);

@@ -24,7 +24,7 @@
                 <h3 >{{ servico.nome }}</h3>
                 <p>{{ servico.descricao }}</p>
                 <span class="horario">
-                  Horário: {{ formatTime(servico.horarioInicio) }} às {{ formatTime(servico.horarioFim) }}
+                  Horário: {{ formatDate(servico.horarioInicio) }} às {{ formatDate(servico.horarioFim) }}
                 </span>
               </article>
               @if(usuario?.tipoUsuario === 'Cliente') {
