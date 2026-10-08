@@ -18,17 +18,6 @@
     }
 
     <section class="panel">
-      <h3>Novo serviço</h3>
-
-      <ion-input label="Nome do serviço" [(ngModel)]="novoServico.nome"></ion-input>
-      <ion-input label="Descrição" [(ngModel)]="novoServico.descricao"></ion-input>
-      <ion-input label="Início" type="datetime-local" [(ngModel)]="novoServico.horarioInicio"></ion-input>
-      <ion-input label="Fim" type="datetime-local" [(ngModel)]="novoServico.horarioFim"></ion-input>
-
-      <ion-button expand="block" (click)="cadastrarServico()">Adicionar serviço</ion-button>
-    </section>
-
-    <section class="panel">
       <h3>Serviços cadastrados</h3>
 
       @if (!prestador.Servicos.length) {

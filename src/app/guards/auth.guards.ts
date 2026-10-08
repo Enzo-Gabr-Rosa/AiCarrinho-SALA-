@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, Router} from '@angular/router';
 import { Usuario } from '../Modelos/usuario-modelo';
 import { autenticacaoService } from '../Services/autenticacao-service';
 
@@ -7,7 +7,7 @@ export const authGuard: CanActivateFn = () => {
   const autenticacao = inject(autenticacaoService);
   const router = inject(Router);
 
-  return autenticacao.estaLogado() || router.createUrlTree(['/login']);
+  return autenticacao.estaLogado() || router.navigate(['/login']);
 };
 
 export const papelGuard: CanActivateFn = (route) => {
@@ -16,13 +16,13 @@ export const papelGuard: CanActivateFn = (route) => {
   const usuario = autenticacao.obterUsuarioAtual();
 
   if (!usuario) {
-    return router.createUrlTree(['/login']);
+    return router.navigate(['/login']);
   }
 
-  const papelRequerido = route.data['papel'] as Usuario['tipoUsuario'] | undefined;
-  if (!papelRequerido || usuario.tipoUsuario === papelRequerido) {
+  const tipoRequerido = route.data['papel'] as Usuario['tipoUsuario'] | undefined;
+  if (!tipoRequerido || usuario.tipoUsuario === tipoRequerido) {
     return true;
   }
 
-  return router.createUrlTree(['/perfil']);
+  return router.navigate(['/perfil']);
 };

@@ -20,7 +20,7 @@ import { animate } from 'animejs';
 })
 
 export class LoginPage implements OnInit {
-  //Implementar uma meelhor verificação da situação do telefone e do cpf
+  //Implementar uma melhor verificação da situação do telefone e do cpf
   private clienteService = inject(clienteService);
   private administradorService = inject(administradorService);
   private prestadorService = inject(prestadorService);
@@ -32,7 +32,7 @@ export class LoginPage implements OnInit {
   protected cadastroUsuarioForm = this.formBuilder.group({
     CPF: ['',[Validators.required, Validators.minLength(11), Validators.maxLength(14), Validators.pattern(/^\d{11}$|^\d{3}\.\d{3}\.\d{3}-\d{2}$/)]],
     Nome: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-    Telefone: ['',[Validators.required, Validators.minLength(10), Validators.maxLength(16)],Validators.pattern(/^\(\d{2}\)\s?\d{4,5}-?\d{4}$|^\d{10,11}$/)],
+    Telefone: ['',[Validators.required, Validators.minLength(10), Validators.maxLength(16),Validators.pattern(/^\(\d{2}\)\s?\d{4,5}-?\d{4}$|^\d{10,11}$/)]],
     Email: ['',[Validators.email, Validators.maxLength(100)]],
     Senha: ['',[Validators.required, Validators.minLength(6), Validators.maxLength(45)]],
     TipoUsuario: ['', [Validators.required]]
@@ -54,7 +54,7 @@ export class LoginPage implements OnInit {
     await toast.present();
   }
   
-  protected async login() {
+  protected async login() { //FAzer login por cpf
     const nome = this.loginForm.get('Nome')?.value?.trim() ?? ''; // Verifica se o valor é nulo ou indefinido e remove espaços em branco
     const senha = this.loginForm.get('Senha')?.value ?? '';
 

@@ -29,13 +29,13 @@ export const routes: Routes = [
   {
     path: 'agendamentos',
     loadComponent: () => import('./agendamentos/agendamentos.page').then((m) => m.AgendamentosPage),
-    canActivate: [authGuard, papelGuard],
+    canActivate: [authGuard],
     data: { papel: 'Prestador' },
   },
   {
     path: 'prestador',
     loadComponent: () => import('./prestador/prestador.page').then((m) => m.PrestadorPage),
-    canActivate: [authGuard, papelGuard],
+    canActivate: [authGuard],
     data: { papel: 'Prestador' },
   },
 ];

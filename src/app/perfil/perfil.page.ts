@@ -15,6 +15,9 @@ import { autenticacaoService } from '../Services/autenticacao-service';
   imports: [IonContent, IonInput, IonHeader, IonButtons, IonModal, IonButton, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class PerfilPage implements OnInit {
+  //Adicionar a descrição do usuário
+  //Implementar a funcionalidade de alterar a foto do usuário
+  //Implementar verificação de edição do perfil
   @ViewChild(IonModal) modal!: IonModal;
   private router = inject(Router);
   private clienteService = inject(clienteService);
@@ -24,7 +27,6 @@ export class PerfilPage implements OnInit {
   protected tipoUsuario = 'Usuário';
   protected estaAberto = false;
   protected fotoPerfil = 'assets/imgs/Foto User.png';
-  //Adicionar a descrição do usuário
 
   constructor() {
     this.usuario = this.autenticacaoService.obterUsuarioAtual();

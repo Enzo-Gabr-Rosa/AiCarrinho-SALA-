@@ -17,6 +17,8 @@ import { autenticacaoService } from '../Services/autenticacao-service';
 })
 export class HomePage { //Implementar clicar no card do prestador e ser levado a pagina de perfil do prestador
   //Implementar um gap entre o tempo permitido para um agendamento (ex: 1 hora)
+  //Implementar pesquisa e filtro de serviços e prestadores
+  //Implementar alteração do botão agendar Serviço para "Agendado" caso o usuário já tenha agendado o serviço e "Cancelado" caso contrário
   private prestadorService: prestadorService = inject(prestadorService);
   private agendamentoService: agendamentoService = inject(agendamentoService);
   protected prestadores: readonly Prestador[] = [];
@@ -74,7 +76,6 @@ export class HomePage { //Implementar clicar no card do prestador e ser levado a
 
   protected formatDate(horario: Date | string): string {
     const data = new Date(horario);
-    console.log('Data formatada:', `${String(data.getDate()).padStart(2, '0')}/${String(data.getMonth() + 1).padStart(2, '0')}/${data.getFullYear()} ${String(data.getHours()).padStart(2, '0')}:${String(data.getMinutes()).padStart(2, '0')}`);
     return `${String(data.getDate()).padStart(2, '0')}/${String(data.getMonth() + 1).padStart(2, '0')}/${data.getFullYear()} ${String(data.getHours()).padStart(2, '0')}:${String(data.getMinutes()).padStart(2, '0')}`;
   }
   private async mostrarToast(mensagem: string) {
