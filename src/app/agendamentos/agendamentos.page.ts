@@ -31,6 +31,7 @@ export class AgendamentosPage {
   protected usuarioEdicao: Partial<Usuario> = {};
   protected usuario: { id: number; Nome: string; tipoUsuario: 'Cliente' | 'Prestador' | 'Administrador' } | null = null;
   protected agendamentos: Agendamento[] = [];
+  protected prestadores: Prestador[] = [];
   protected tipoUsuario = 'Usuário';
   protected servicoForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -47,11 +48,11 @@ export class AgendamentosPage {
     }
 
     this.tipoUsuario = this.usuario.tipoUsuario;
-    this.carregarAgendamentos();
+    void this.carregarDados();
   }
 
-  ionViewWillEnter() {
-    this.carregarAgendamentos();
+  async ionViewWillEnter() {
+    await this.carregarDados();
   }
 
   protected voltarParaHome() {
@@ -62,10 +63,10 @@ export class AgendamentosPage {
     this.router.navigate(['/perfil']);
   }
 
-  protected cancelarAgendamento(id: number) {
-    const cancelado = this.agendamentoService.cancelarAgendamento(id);
+  protected async cancelarAgendamento(id: number) {
+    const cancelado = await this.agendamentoService.cancelarAgendamento(id);
     if (cancelado) {
-      this.carregarAgendamentos();
+      await this.carregarDados();
     }
   }
   protected async cadastrarServico() {
@@ -88,12 +89,12 @@ export class AgendamentosPage {
       return;
     }
 
-    if (this.prestadorService.validarHorarioSobreposto(this.usuario.id, inicio, fim)) {
+    if (await this.prestadorService.validarHorarioSobreposto(this.usuario.id, inicio, fim)) {
       await this.mostrarToast('Este serviço se sobrepõe a outro horário já cadastrado.', 'danger');
       return;
     }
 
-    const cadastrado = this.prestadorService.cadastrarServico(
+    const cadastrado = await this.prestadorService.cadastrarServico(
       this.usuario.id,
       nome.trim(),
       descricao.trim(),
@@ -108,7 +109,7 @@ export class AgendamentosPage {
 
     this.servicoForm.reset();
     this.setOpen(false);
-    this.carregarAgendamentos();
+    await this.carregarDados();
     await this.mostrarToast('Serviço cadastrado com sucesso.', 'success');
   }
 
@@ -123,7 +124,7 @@ export class AgendamentosPage {
   }
 
   protected getPrestadorPorId(idPrestador: number): Prestador | undefined {
-    return this.prestadorService.obterPrestadorPorId(idPrestador);
+    return this.prestadores.find(prestador => String(prestador.id) === String(idPrestador));
   }
 
   protected getServicoDoPrestador(idPrestador: number, idServico: number): Servico | undefined {
@@ -136,24 +137,27 @@ export class AgendamentosPage {
     return `${String(value.getDate()).padStart(2, '0')}/${String(value.getMonth() + 1).padStart(2, '0')}/${value.getFullYear()} ${String(value.getHours()).padStart(2, '0')}:${String(value.getMinutes()).padStart(2, '0')}`;
   }
 
-  private carregarAgendamentos() {
+  private async carregarDados() {
     if (!this.usuario) {
       this.agendamentos = [];
+      this.prestadores = [];
       return;
     }
 
-    if (this.usuario.tipoUsuario === 'Cliente') {
-      this.agendamentos = this.agendamentoService.obterAgendamentosPorCliente(this.usuario.id);
-      console.log()
-      return;
-    }
-
-    if (this.usuario.tipoUsuario === 'Prestador') {
-      this.agendamentos = this.agendamentoService.obterAgendamentosPorPrestador(this.usuario.id);
-      return;
-    }
-
-    this.agendamentos = this.agendamentoService.obterAgendamentos();
+    const [agendamentos, prestadores] = await Promise.all([
+      this.agendamentoService.obterAgendamentos(),
+      this.prestadorService.obterPrestadores()
+    ]);
+    this.prestadores = prestadores;
+    this.agendamentos = agendamentos.filter(agendamento => {
+      if (this.usuario?.tipoUsuario === 'Cliente') {
+        return String(agendamento.idCliente) === String(this.usuario.id);
+      }
+      if (this.usuario?.tipoUsuario === 'Prestador') {
+        return String(agendamento.idPrestador) === String(this.usuario.id);
+      }
+      return true;
+    });
   }
   
   setOpen(isOpen: boolean) {

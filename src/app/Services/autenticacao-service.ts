@@ -3,6 +3,7 @@ import { Usuario } from '../Modelos/usuario-modelo';
 import { clienteService } from './cliente-service';
 import { administradorService } from './administador-service';
 import { prestadorService } from './prestador-service';
+import { cpf } from 'cpf-cnpj-validator';
 
 @Injectable({
   providedIn: 'root',
@@ -50,8 +51,8 @@ export class autenticacaoService {
     localStorage.removeItem(this.STORAGE_KEY);
   }
 
-  public autenticar(nome: string, senha: string): Usuario | null {
-    const usuario = this.obterUsuarioPorNome(nome);
+  public async autenticar(cpf: string, senha: string): Promise<Usuario | null> {
+    const usuario = await this.obterUsuarioPorCPF(cpf);
     if (!usuario || usuario.Senha !== senha) {
       return null;
     }
@@ -59,13 +60,28 @@ export class autenticacaoService {
     return usuario;
   }
 
-  public obterUsuarioPorNome(nome: string): Usuario | null { //?? executa o segundo comando caso o primeiro seja null ou undefined
-    const usuario =
-      this.clienteService.obterClientePorNome(nome) ??
-      this.administradorService.obterAdministradorPorNome(nome) ??
-      this.prestadorService.obterPrestadorPorNome(nome);
+  public async obterTodosUsuarios(): Promise<Usuario[]> {
+    const [clientes, administradores, prestadores] = await Promise.all([
+      this.clienteService.obterClientes(),
+      this.administradorService.obterAdministradores(),
+      this.prestadorService.obterPrestadores()
+    ]);
+    return [...clientes, ...administradores, ...prestadores];
+  }
 
-    return usuario ?? null;
+  public async obterUsuarioPorCPF(cpfInformado: string): Promise<Usuario | null> {
+    const cpfNormalizado = cpf.strip(cpfInformado);
+    if (cpfNormalizado.length !== 11) {
+      return null;
+    }
+
+    const usuarios = await this.obterTodosUsuarios();
+    const usuario = usuarios.filter(usuario => cpf.strip(usuario.CPF) === cpfNormalizado);
+    return usuario.length === 1 ? usuario[0] : null;
+  }
+
+  public async existeCPF(cpf: string): Promise<boolean> {
+    return (await this.obterUsuarioPorCPF(cpf)) !== null;
   }
 
   public estaLogado(): boolean {
@@ -78,7 +94,11 @@ export class autenticacaoService {
     }
 
     const usuario = valor as Partial<Usuario>;
-    return Number.isFinite(usuario.id) &&
+    const id: unknown = usuario.id;
+    const idValido = typeof id === 'number'
+      ? Number.isFinite(id)
+      : typeof id === 'string' && id.trim().length > 0;
+    return idValido &&
       (usuario.tipoUsuario === 'Cliente' ||
         usuario.tipoUsuario === 'Administrador' ||
         usuario.tipoUsuario === 'Prestador');

@@ -1,12 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   IonButton,
   IonContent,
   IonHeader,
-  IonInput,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -20,14 +19,16 @@ import { prestadorService } from '../Services/prestador-service';
   templateUrl: './prestador.page.html',
   styleUrls: ['./prestador.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonInput, CommonModule, FormsModule],
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButton, CommonModule, FormsModule],
 })
 export class PrestadorPage {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private autenticacaoService = inject(autenticacaoService);
   private prestadorService = inject(prestadorService);
 
   protected prestador: Prestador | null = null;
+  protected somenteLeitura = false;
   protected mensagemErro = '';
   protected novoServico: {
     nome: string;
@@ -42,14 +43,26 @@ export class PrestadorPage {
   };
 
   constructor() {
-    this.prestador = this.autenticacaoService.obterUsuarioAtual() as Prestador | null;
-    if (!this.prestador || this.prestador.tipoUsuario !== 'Prestador') {
-      this.router.navigate(['/login']);
-      return;
-    }
+    void this.carregarPerfil();
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
+    await this.carregarPerfil();
+  }
+
+  private async carregarPerfil() {
+    this.mensagemErro = '';
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.somenteLeitura = true;
+      this.prestador = await this.prestadorService.obterPrestadorPorId(Number(idParam)) ?? null;
+      if (!this.prestador) {
+        this.mensagemErro = 'Prestador não encontrado.';
+      }
+      return;
+    }
+
+    this.somenteLeitura = false;
     this.prestador = this.autenticacaoService.obterUsuarioAtual() as Prestador | null;
     if (!this.prestador || this.prestador.tipoUsuario !== 'Prestador') {
       this.router.navigate(['/login']);
@@ -64,7 +77,7 @@ export class PrestadorPage {
     this.router.navigate(['/perfil']);
   }
 
-  protected cadastrarServico() {
+  protected async cadastrarServico() {
     this.mensagemErro = '';
     if (!this.prestador) 
       return;
@@ -92,12 +105,12 @@ export class PrestadorPage {
       return;
     }
 
-    if (this.prestadorService.validarHorarioSobreposto(this.prestador.id, horarioInicio, horarioFim)) {
+    if (await this.prestadorService.validarHorarioSobreposto(this.prestador.id, horarioInicio, horarioFim)) {
       this.mensagemErro = 'Este serviço se sobrepõe com outro horário já cadastrado.';
       return;
     }
 
-    const sucesso = this.prestadorService.cadastrarServico(
+    const sucesso = await this.prestadorService.cadastrarServico(
       this.prestador.id,
       nome,
       descricao,
@@ -112,20 +125,20 @@ export class PrestadorPage {
         horarioInicio: '',
         horarioFim: '',
       };
-      this.prestador = this.prestadorService.obterPrestadorPorId(this.prestador.id) ?? this.prestador;
+      this.prestador = await this.prestadorService.obterPrestadorPorId(this.prestador.id) ?? this.prestador;
     } else {
       this.mensagemErro = 'Erro ao cadastrar serviço. Verifique se o nome já existe.';
     }
   }
 
-  protected removerServico(idServico: number) {
+  protected async removerServico(idServico: number) {
     if (!this.prestador) {
       return;
     }
 
-    const removido = this.prestadorService.removerServico(this.prestador.id, idServico);
+    const removido = await this.prestadorService.removerServico(this.prestador.id, idServico);
     if (removido) {
-      this.prestador = this.prestadorService.obterPrestadorPorId(this.prestador.id) ?? this.prestador;
+      this.prestador = await this.prestadorService.obterPrestadorPorId(this.prestador.id) ?? this.prestador;
     }
   }
 

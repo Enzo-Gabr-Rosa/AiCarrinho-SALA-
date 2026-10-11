@@ -3,8 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonContent, IonInput, IonHeader, IonButtons, IonModal, IonButton, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { ToastController } from '@ionic/angular';
 import { Usuario } from '../Modelos/usuario-modelo';
 import { clienteService } from '../Services/cliente-service';
+import { prestadorService } from '../Services/prestador-service';
+import { administradorService } from '../Services/administador-service';
 import { autenticacaoService } from '../Services/autenticacao-service';
 
 @Component({
@@ -21,11 +24,15 @@ export class PerfilPage implements OnInit {
   @ViewChild(IonModal) modal!: IonModal;
   private router = inject(Router);
   private clienteService = inject(clienteService);
+  private prestadorService = inject(prestadorService);
+  private administradorService = inject(administradorService);
   private autenticacaoService = inject(autenticacaoService);
+  private toastController = inject(ToastController);
   protected usuario: Usuario | null = null;
   protected usuarioEdicao: Partial<Usuario> = {};
   protected tipoUsuario = 'Usuário';
   protected estaAberto = false;
+  protected excluindoPerfil = false;
   protected fotoPerfil = 'assets/imgs/Foto User.png';
 
   constructor() {
@@ -81,20 +88,54 @@ export class PerfilPage implements OnInit {
     this.setOpen(false);
   }
 
-  protected excluirPerfil() {
-    if (!this.usuario) {
+  protected async excluirPerfil() {
+    if (!this.usuario || this.excluindoPerfil) {
       return;
     }
 
-    if (this.usuario.tipoUsuario === 'Cliente') {
-      const cliente = this.clienteService.obterClientePorId(this.usuario.id);
-      if (cliente) {
-        this.clienteService.excluir(cliente);
+    this.excluindoPerfil = true;
+    try {
+      let excluido = false;
+      switch (this.usuario.tipoUsuario) {
+        case 'Cliente': {
+          const cliente = await this.clienteService.obterClientePorId(this.usuario.id);
+          excluido = cliente ? await this.clienteService.excluir(cliente) : false;
+          break;
+        }
+        case 'Prestador': {
+          const prestador = await this.prestadorService.obterPrestadorPorId(this.usuario.id);
+          excluido = prestador ? await this.prestadorService.excluir(prestador) : false;
+          break;
+        }
+        case 'Administrador': {
+          const administrador = await this.administradorService.obterAdministradorPorId(this.usuario.id);
+          excluido = administrador ? await this.administradorService.excluir(administrador) : false;
+          break;
+        }
       }
-    }
 
-    this.autenticacaoService.limparSessao();
-    this.router.navigate(['/login']);
+      if (!excluido) {
+        await this.mostrarToast('Não foi possível excluir o perfil. Tente novamente.');
+        return;
+      }
+
+      this.autenticacaoService.limparSessao();
+      this.router.navigate(['/login']);
+    } catch {
+      await this.mostrarToast('Não foi possível excluir o perfil. Tente novamente.');
+    } finally {
+      this.excluindoPerfil = false;
+    }
+  }
+
+  private async mostrarToast(mensagem: string) {
+    const toast = await this.toastController.create({
+      message: mensagem,
+      duration: 2500,
+      position: 'bottom',
+      color: 'danger',
+    });
+    await toast.present();
   }
 
   protected logout() {

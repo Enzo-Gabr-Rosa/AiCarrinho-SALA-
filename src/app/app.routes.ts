@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, papelGuard } from './guards/auth.guards';
+import { authGuard, tipoGuard } from './guards/auth.guards';
 
 export const routes: Routes = [
   {
@@ -30,12 +30,17 @@ export const routes: Routes = [
     path: 'agendamentos',
     loadComponent: () => import('./agendamentos/agendamentos.page').then((m) => m.AgendamentosPage),
     canActivate: [authGuard],
-    data: { papel: 'Prestador' },
+  },
+  {
+    path: 'prestador/:id',
+    loadComponent: () => import('./prestador/prestador.page').then((m) => m.PrestadorPage),
+    canActivate: [authGuard, tipoGuard],
+    data: { tipo: 'Prestador' },
   },
   {
     path: 'prestador',
     loadComponent: () => import('./prestador/prestador.page').then((m) => m.PrestadorPage),
-    canActivate: [authGuard],
-    data: { papel: 'Prestador' },
+    canActivate: [authGuard, tipoGuard],
+    data: { tipo: 'Prestador' },
   },
 ];

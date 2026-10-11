@@ -8,10 +8,10 @@
   @if (prestador) {
     <section class="header-card">
       <h2>{{ prestador.Nome }}</h2>
-      <p>{{ prestador.Descricao || 'Adicione uma descrição para o seu perfil.' }}</p>
+      <p>{{ prestador.Descricao || (somenteLeitura ? 'Sem descrição cadastrada.' : 'Adicione uma descrição para o seu perfil.') }}</p>
     </section>
 
-    @if (mensagemErro) {
+    @if (mensagemErro && !somenteLeitura) {
       <section style="background: #fee; border: 1px solid #fcc; border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem; color: #c00; font-size: 0.9rem;">
         {{ mensagemErro }}
       </section>
@@ -27,7 +27,9 @@
           <article class="servico-card">
             <div class="servico-header">
               <h4>{{ servico.nome }}</h4>
-              <ion-button color="danger" fill="clear" (click)="removerServico(servico.id)">Excluir</ion-button>
+              @if (!somenteLeitura) {
+                <ion-button color="danger" fill="clear" (click)="removerServico(servico.id)">Excluir</ion-button>
+              }
             </div>
             <p>{{ servico.descricao || 'Sem descrição adicional.' }}</p>
             <span>{{ formatDate(servico.horarioInicio) }} até {{ formatDate(servico.horarioFim) }}</span>
@@ -38,7 +40,11 @@
 
     <div class="footer-actions">
       <ion-button expand="block" (click)="voltarParaHome()">Início</ion-button>
-      <ion-button expand="block" fill="outline" (click)="voltarParaPerfil()">Perfil</ion-button>
+      @if (!somenteLeitura) {
+        <ion-button expand="block" fill="outline" (click)="voltarParaPerfil()">Perfil</ion-button>
+      }
     </div>
+  } @else if (somenteLeitura && mensagemErro) {
+    <section class="empty-state">{{ mensagemErro }}</section>
   }
 </ion-content>

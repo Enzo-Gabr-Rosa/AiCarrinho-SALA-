@@ -1,11 +1,13 @@
 import { Component, inject } from '@angular/core';
-import { IonHeader, IonButton, IonToolbar, IonTitle, IonContent } from '@ionic/angular/standalone';
+import { FormsModule } from '@angular/forms';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonInput } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { Prestador } from '../Modelos/prestador-modelo';
 import { prestadorService } from '../Services/prestador-service';
 import { agendamentoService } from '../Services/agendamento-service';
 import { Servico } from '../Modelos/servico-modelo';
 import { Cliente } from '../Modelos/cliente-modelo';
+import { Agendamento } from '../Modelos/agendamento-modelo';
 import { ToastController } from '@ionic/angular';
 import { autenticacaoService } from '../Services/autenticacao-service';
 
@@ -13,15 +15,14 @@ import { autenticacaoService } from '../Services/autenticacao-service';
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  imports: [IonHeader, IonButton, IonToolbar, IonTitle, IonContent],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonInput, FormsModule],
 })
-export class HomePage { //Implementar clicar no card do prestador e ser levado a pagina de perfil do prestador
-  //Implementar um gap entre o tempo permitido para um agendamento (ex: 1 hora)
-  //Implementar pesquisa e filtro de serviços e prestadores
-  //Implementar alteração do botão agendar Serviço para "Agendado" caso o usuário já tenha agendado o serviço e "Cancelado" caso contrário
+export class HomePage {
   private prestadorService: prestadorService = inject(prestadorService);
   private agendamentoService: agendamentoService = inject(agendamentoService);
   protected prestadores: readonly Prestador[] = [];
+  protected agendamentos: readonly Agendamento[] = [];
+  protected termoBusca = '';
   private router = inject(Router);
   private toastController = inject(ToastController);
   private autenticacaoService = inject(autenticacaoService);
@@ -33,17 +34,66 @@ export class HomePage { //Implementar clicar no card do prestador e ser levado a
       this.router.navigate(['/login']);
     }
   }
-  ionViewWillEnter() {
-    this.prestadores = this.prestadorService.obterPrestadores();
+  async ionViewWillEnter() {
+    [this.prestadores, this.agendamentos] = await Promise.all([
+      this.prestadorService.obterPrestadores(),
+      this.agendamentoService.obterAgendamentos()
+    ]);
   }
+
+  protected filtrarPrestadores(): readonly Prestador[] {
+    const termo = this.normalizarBusca(this.termoBusca);
+    if (!termo) {
+      return this.prestadores;
+    }
+
+    return this.prestadores.filter((prestador) => {
+      const dadosPrestador = this.normalizarBusca(`${prestador.Nome} ${prestador.Descricao}`);
+      return dadosPrestador.includes(termo) ||
+        prestador.Servicos.some((servico) =>
+          this.normalizarBusca(`${servico.nome} ${servico.descricao}`).includes(termo)
+        );
+    });
+  }
+
+  protected servicosFiltrados(prestador: Prestador): readonly Servico[] {
+    const termo = this.normalizarBusca(this.termoBusca);
+    if (!termo) {
+      return prestador.Servicos;
+    }
+
+    const dadosPrestador = this.normalizarBusca(`${prestador.Nome} ${prestador.Descricao}`);
+    if (dadosPrestador.includes(termo)) {
+      return prestador.Servicos;
+    }
+
+    return prestador.Servicos.filter((servico) =>
+      this.normalizarBusca(`${servico.nome} ${servico.descricao}`).includes(termo)
+    );
+  }
+
+  private normalizarBusca(valor: string): string {
+    // Separa letras de seus acentos, remove as marcas, converte para minúsculas e tira espaços das extremidades para comparar buscas sem depender de acentuação ou caixa.
+    return valor.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().trim();
+  }
+
   async agendarServico(prestador: Prestador, servico: Servico) {
     if (!this.usuario || this.usuario.tipoUsuario !== 'Cliente') {
       await this.mostrarToast('Apenas clientes podem agendar serviços.');
       return;
     }
 
+    if (!await this.agendamentoService.intervaloDisponivel(
+      prestador.id,
+      servico.horarioInicio,
+      servico.horarioFim
+    )) {
+      await this.mostrarToast('Este horário precisa ter pelo menos 1 hora de intervalo de outro agendamento.');
+      return;
+    }
+
     const agendamento = {
-      id:this.agendamentoService.obterAgendamentos().length + 1,
+      id: Math.max(0, ...this.agendamentos.map(item => Number(item.id)).filter(Number.isFinite)) + 1,
       idCliente: this.usuario.id,
       idPrestador: prestador.id,
       idServico: servico.id,
@@ -51,11 +101,10 @@ export class HomePage { //Implementar clicar no card do prestador e ser levado a
       horarioFim: servico.horarioFim,
       status: "Pendente" as 'Pendente' | 'Confirmado' | 'Cancelado'
     };
-    const sucesso = this.agendamentoService.adicionar(
-      agendamento
-    );
+    const sucesso = await this.agendamentoService.adicionar(agendamento);
     console.log( `Agendamento ${sucesso ? 'realizado' : 'falhou'}:`, agendamento);
     if (sucesso) {
+      this.agendamentos = await this.agendamentoService.obterAgendamentos();
       await this.mostrarToast('Agendamento realizado com sucesso!');
     } else {
       await this.mostrarToast('Falha ao realizar o agendamento. Por favor, tente novamente.');
@@ -70,8 +119,35 @@ export class HomePage { //Implementar clicar no card do prestador e ser levado a
     this.router.navigate(['/agendamentos']);
   }
 
-  goToPrestador() {
-    this.router.navigate(['/prestador']);
+  goToPrestador(prestador: Prestador) {
+    this.router.navigate(['/prestador', prestador.id]);
+  }
+
+  protected agendamentoDoServico(prestador: Prestador, servico: Servico) {
+    if (!this.usuario) {
+      return undefined;
+    }
+
+    const correspondentes = this.agendamentos.filter(agendamento =>
+      String(agendamento.idCliente) === String(this.usuario?.id) &&
+      String(agendamento.idPrestador) === String(prestador.id) &&
+      agendamento.idServico === servico.id
+    );
+    return correspondentes.find(agendamento => agendamento.status !== 'Cancelado') ??
+      correspondentes[correspondentes.length - 1];
+  }
+
+  protected textoBotaoAgendamento(prestador: Prestador, servico: Servico): string {
+    const agendamento = this.agendamentoDoServico(prestador, servico);
+    if (!agendamento) {
+      return 'Agendar Serviço';
+    }
+    return agendamento.status === 'Cancelado' ? 'Cancelado' : 'Agendado';
+  }
+
+  protected agendamentoJaExiste(prestador: Prestador, servico: Servico): boolean {
+    const agendamento = this.agendamentoDoServico(prestador, servico);
+    return Boolean(agendamento && agendamento.status !== 'Cancelado');
   }
 
   protected formatDate(horario: Date | string): string {

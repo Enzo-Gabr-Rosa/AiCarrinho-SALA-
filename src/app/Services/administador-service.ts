@@ -1,104 +1,108 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Administrador } from '../Modelos/administrador-modelo';
-import { UsuarioExclusao } from './exclusao-service';
 import { Usuario } from '../Modelos/usuario-modelo';
 import { environment } from 'src/environments/environment';
+import { firstValueFrom } from 'rxjs';
+import { cpf } from 'cpf-cnpj-validator';
 
 @Injectable({
   providedIn: 'root',
 })
 export class administradorService {
-  private administradores: Administrador[] = [];
-  private exclusaoService: UsuarioExclusao = inject(UsuarioExclusao);
   private http = inject(HttpClient);
   private api = `${environment.api}/administradores`;
 
-  constructor() {
-    this.carregarAdministradores();
-  }
-
-  private carregarAdministradores() {
-    this.http.get<Administrador[]>(this.api).subscribe({
-      next: (dados) => {
-        this.administradores = dados.map(d => new Administrador(
-          d.id,
-          d.CPF,
-          d.Nome,
-          d.Telefone,
-          d.Email,
-          d.Senha
-        ));
-      },
-      error: () => {
-        this.administradores = [];
-      }
+  //________________________________________________________
+  //CRUD
+  public async obterAdministradores(): Promise<Administrador[]> {
+    const dados = await firstValueFrom(this.http.get<Administrador[]>(this.api));
+    const administradores: Administrador[] = [];
+    dados.forEach(dado => {
+      administradores.push(new Administrador(
+        dado.id,
+        dado.CPF,
+        dado.Nome,
+        dado.Telefone,
+        dado.Email,
+        dado.Senha
+      ));
     });
+    return administradores;
   }
 
-  //Administrador
-  public obterAdministradores() {
-    return Object.freeze([...this.administradores]);
-  }
-  public adicionar(usuario: Usuario):boolean {
-      const tamanhoAnterior = this.administradores.length;
-      const administrador = new Administrador(
-        usuario.id,
-        usuario.CPF,
-        usuario.Nome,
-        usuario.Telefone,
-        usuario.Email,
-        usuario.Senha,
-      );
-      if(this.verificarExistencia(usuario)){
-      return false;
+  public async adicionar(usuario: Usuario): Promise<Administrador | null> {
+    const administrador = new Administrador(
+      await this.novoId(),
+      usuario.CPF,
+      usuario.Nome,
+      usuario.Telefone,
+      usuario.Email,
+      usuario.Senha
+    );
+
+    try {
+      if (await this.verificarCPF(administrador.CPF)) {
+        return null;
       }
-      this.http.post<Administrador>(this.api, {
-        id: administrador.id,
+
+      const criado = await firstValueFrom(this.http.post<Administrador>(this.api, {
         CPF: administrador.CPF,
         Nome: administrador.Nome,
         Telefone: administrador.Telefone,
         Email: administrador.Email,
-        Senha: administrador.Senha
-      }).subscribe({
-        next: () => this.administradores.push(administrador),
-        error: () => this.administradores.push(administrador)
-      });
-      return tamanhoAnterior < this.administradores.length + 1;
+        Senha: administrador.Senha,
+      }));
+      return new Administrador(criado.id, criado.CPF, criado.Nome, criado.Telefone, criado.Email, criado.Senha);
+    } catch {
+      return null;
     }
-    public excluir(administrador: Administrador): boolean {
-      const usuarioExcluido = {
-      id: administrador.id,
-      CPF: administrador.CPF,
-      Nome: administrador.Nome,
-      Telefone: administrador.Telefone,
-      Email: administrador.Email,
-      Senha: administrador.Senha,
-      tipoUsuario: administrador.tipoUsuario,
-      excluidoEm: new Date(), 
-    };
+  }
 
-    this.administradores.splice(this.administradores.indexOf(administrador), 1);
-    this.http.delete(`${this.api}/${administrador.id}`).subscribe();
-    return this.exclusaoService.excluir(usuarioExcluido);
-  }
-  //Complementares
-  private verificarExistencia(usuario: Usuario):boolean{
-    if(this.verificarCPF(usuario.CPF)){
-        return true;
-      }else if(this.verificarExclusao(usuario.id, 'Administrador')){
-        return true;
-      }
+  public async excluir(administrador: Administrador): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.delete(`${this.api}/${administrador.id}`));
+      return true;
+    } catch {
       return false;
+    }
   }
-  private verificarCPF(CPF: string): boolean {
-    const administrador = this.administradores.find((administrador) =>  administrador.CPF.split(/[.-]/).join('') === CPF); // 000.000.000.11 -> 00000000011
-    return !!administrador;
+
+  //________________________________________________________
+  //Verificadores 
+  public async verificarCPF(CPF: string): Promise<boolean> {
+    const cpfNormalizado = cpf.strip(CPF);
+    const administradores = await this.obterAdministradores();
+    return administradores.some(administrador => cpf.strip(administrador.CPF) === cpfNormalizado);
   }
-  public obterAdministradorPorNome(nome:string){
-    return this.administradores.find((administrador) =>  administrador.Nome.toLowerCase() === nome.toLocaleLowerCase());
+
+  //________________________________________________________
+  //Pesquisadores
+  public async obterAdministradorPorNome(nome: string): Promise<Administrador | undefined> {
+    const administradores = await this.obterAdministradores();
+    return administradores.find(administrador => administrador.Nome.toLocaleLowerCase() === nome.toLocaleLowerCase());
   }
-  private verificarExclusao(id: number, tipoUsuario:'Cliente'|'Administrador'|'Prestador'):boolean{
-    return this.exclusaoService.verificarExclusao(id, tipoUsuario);
+
+  public async obterAdministradorPorId(id: number): Promise<Administrador | undefined> {
+    const administradores = await this.obterAdministradores();
+    return administradores.find(administrador => String(administrador.id) === String(id));
   }
+
+  public async obterAdministradorPorCPF(cpfInformado: string): Promise<Administrador | undefined> {
+    const cpfNormalizado = cpf.strip(cpfInformado);
+    const administradores = await this.obterAdministradores();
+    return administradores.find(administrador => cpf.strip(administrador.CPF) === cpfNormalizado);
+  }
+
+  //________________________________________________________
+  //Complementares
+  private async novoId(): Promise<number> {
+    const administradores = await this.obterAdministradores();
+    const ids: number[] = [];
+    administradores.forEach(administrador => {
+      ids.push(administrador.id);
+    });
+    return ids.length > 0 ? Math.max(...ids) + 1 : 1;
+  }
+
 }

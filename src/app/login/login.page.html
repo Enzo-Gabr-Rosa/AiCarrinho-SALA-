@@ -18,12 +18,17 @@
 
         <div id="login-form">
           <ion-input
-            label="USUÁRIO:"
+            label="CPF:"
             fill="underline"
             class="input-custom"
             type="text"
-            formControlName="Nome">
+            inputmode="numeric"
+            formControlName="CPF">
           </ion-input>
+
+          <ion-text color="danger" *ngIf="loginForm.controls.CPF.touched && loginForm.controls.CPF.invalid">
+            Informe um CPF válido.
+          </ion-text>
 
           <ion-input
             label="SENHA:"
@@ -86,6 +91,9 @@
             type="text"
             formControlName="Telefone">
           </ion-input>
+          <ion-text color="danger" *ngIf="cadastroUsuarioForm.controls.Telefone.touched && cadastroUsuarioForm.controls.Telefone.invalid">
+            Informe um telefone brasileiro válido com DDD.
+          </ion-text>
 
           <ion-input
             label="CPF:"
@@ -94,6 +102,9 @@
             type="text"
             formControlName="CPF">
           </ion-input>
+          <ion-text color="danger" *ngIf="cadastroUsuarioForm.controls.CPF.touched && cadastroUsuarioForm.controls.CPF.invalid">
+            Informe um CPF válido.
+          </ion-text>
 
           <ion-input
             label="SENHA:"

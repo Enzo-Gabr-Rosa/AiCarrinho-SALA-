@@ -1,132 +1,143 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Servico } from '../Modelos/servico-modelo';
+import { firstValueFrom } from 'rxjs';
+import { Agendamento } from '../Modelos/agendamento-modelo';
 import { prestadorService } from './prestador-service';
 import { clienteService } from './cliente-service';
-import { Agendamento } from '../Modelos/agendamento-modelo';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class agendamentoService {
+  private readonly intervaloMinimoMs = 60 * 60 * 1000;
   private http = inject(HttpClient);
-  private Agendamentos: Agendamento[] = [];
-  private prestadorService: prestadorService = inject(prestadorService);
-  private clienteService: clienteService = inject(clienteService);
+  private prestadorService = inject(prestadorService);
+  private clienteService = inject(clienteService);
   private api = `${environment.api}/agendamentos`;
 
-  constructor() {
-    this.carregarAgendamentos();
-  }
-
-  private carregarAgendamentos() {
-    this.http.get<Agendamento[]>(this.api).subscribe({
-      next: (dados) => {
-        this.Agendamentos = dados.map(d => new Agendamento(
-          d.id,
-          d.idCliente,
-          d.idPrestador,
-          d.idServico,
-          new Date(d.horarioInicio),
-          new Date(d.horarioFim),
-          d.status
-        ));
-      },
-      error: () => {
-        // Fallback para dados vazios se a API não estiver disponível
-        this.Agendamentos = [];
-      }
+  //________________________________________________________
+  //CRUD Agendamentos
+  public async obterAgendamentos(): Promise<Agendamento[]> {
+    const dados = await firstValueFrom(this.http.get<Agendamento[]>(this.api));
+    const agendamentos: Agendamento[] = [];
+    dados.forEach((dado: Agendamento) => {
+      agendamentos.push(this.criarAgendamento(dado));
     });
+    return agendamentos;
   }
 
-  public obterAgendamentos(): Agendamento[] {
-    return [...this.Agendamentos];
-  }
-
-  public obterAgendamentosPorCliente(idCliente: number): Agendamento[] {
-    return this.Agendamentos.filter((agendamento) => agendamento.idCliente === idCliente);
-  }
-
-  public obterAgendamentosPorPrestador(idPrestador: number): Agendamento[] {
-    return this.Agendamentos.filter((agendamento) => agendamento.idPrestador === idPrestador);
-  }
-
-  public adicionar(agendamento: Agendamento): boolean {
-    const novoAgendamento = new Agendamento(
-      agendamento.id,
-      agendamento.idCliente,
-      agendamento.idPrestador,
-      agendamento.idServico,
-      agendamento.horarioInicio,
-      agendamento.horarioFim,
-      agendamento.status,
-    );
-
-    if (this.verificarExistencia(novoAgendamento)) {
+  public async adicionar(agendamento: Agendamento): Promise<boolean> {
+    if (await this.verificarExistencia(agendamento)) {
       return false;
     }
 
-    // Criar no servidor
-    this.http.post<Agendamento>(this.api, {
-      id: novoAgendamento.id,
-      idCliente: novoAgendamento.idCliente,
-      idPrestador: novoAgendamento.idPrestador,
-      idServico: novoAgendamento.idServico,
-      horarioInicio: novoAgendamento.horarioInicio,
-      horarioFim: novoAgendamento.horarioFim,
-      status: novoAgendamento.status
-    }).subscribe({
-      next: () => {
-        this.Agendamentos.push(novoAgendamento);
-      },
-      error: () => {
-        this.Agendamentos.push(novoAgendamento);
-      }
-    });
+    const agendamentoNormalizado = {
+      ...agendamento,
+      horarioInicio: new Date(agendamento.horarioInicio).toISOString(),
+      horarioFim: new Date(agendamento.horarioFim).toISOString(),
+    };
 
-    return true;
-  }
-
-  public atualizarStatus(id: number, status: Agendamento['status']): boolean {
-    const agendamento = this.Agendamentos.find((item) => item.id === id);
-    if (!agendamento) {
+    try {
+      await firstValueFrom(this.http.post<Agendamento>(this.api, agendamentoNormalizado));
+      return true;
+    } catch {
       return false;
     }
-
-    agendamento.status = status;
-    
-    // Atualizar no servidor
-    this.http.patch(`${this.api}/${id}`, {
-      status: status
-    }).subscribe(); //Implementar tratamento de erro caso a atualização falhe com next e error
-
-    return true;
+  }
+  public async atualizarHorarios(agendamento: Agendamento): Promise<boolean> {
+    const horarioNormalizado = {
+      horarioInicio: new Date(agendamento.horarioInicio).toISOString(),
+      horarioFim: new Date(agendamento.horarioFim).toISOString(),
+    };
+    try {
+      await firstValueFrom(this.http.patch(`${this.api}/${agendamento.id}`, horarioNormalizado));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
-  public cancelarAgendamento(id: number): boolean {
+  public async atualizarStatus(id: number, status: Agendamento['status']): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.patch(`${this.api}/${id}`, { status }));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  public cancelarAgendamento(id: number): Promise<boolean> {
     return this.atualizarStatus(id, 'Cancelado');
   }
 
-  private verificarExistencia(agendamento: Agendamento): boolean {
-    for (const item of this.Agendamentos) {
-      if (!this.clienteService.obterClientePorId(agendamento.idCliente)?.id) {
-        return true;
-      }
+  //________________________________________________________
+  //Pesquisadores
+  public async obterAgendamentosPorCliente(idCliente: number): Promise<Agendamento[]> {
+    const agendamentos = await this.obterAgendamentos();
+    return agendamentos.filter(agendamento => agendamento.idCliente === idCliente);
+  }
 
-      if (!this.prestadorService.obterPrestadorPorId(agendamento.idPrestador)?.id) {
-        return true;
-      }
+  public async obterAgendamentosPorPrestador(idPrestador: number): Promise<Agendamento[]> {
+    const agendamentos = await this.obterAgendamentos();
+    return agendamentos.filter(agendamento => agendamento.idPrestador === idPrestador);
+  }
 
-      if (
-        item.idServico === agendamento.idServico &&
-        item.idPrestador === agendamento.idPrestador &&
-        item.idCliente === agendamento.idCliente
-      ) {
-        return true;
-      }
+  public async obterAgendamentoDoServico(idCliente: number,idPrestador: number,idServico: number): Promise<Agendamento | undefined> {
+    const agendamentos = await this.obterAgendamentos();
+    const correspondentes = agendamentos.filter(agendamento => agendamento.idCliente === idCliente && agendamento.idPrestador === idPrestador && agendamento.idServico === idServico);
+    return correspondentes.find(agendamento => agendamento.status !== 'Cancelado') ?? undefined;
+  }
+
+  //________________________________________________________
+  //Verificadores e Validadores
+  public async intervaloDisponivel(idPrestador: number,horarioInicio: Date | string,horarioFim: Date | string): Promise<boolean> {
+    const inicio = new Date(horarioInicio).getTime();
+    const fim = new Date(horarioFim).getTime();
+    if (!inicio || !fim || fim <= inicio) {
+      return false;
     }
 
-    return false;
+    const agendamentos = await this.obterAgendamentos();
+    return !agendamentos.some(agendamento => {
+      if (agendamento.idPrestador !== idPrestador || agendamento.status === 'Cancelado') {
+        return false;
+      }
+
+      const inicioExistente = new Date(agendamento.horarioInicio).getTime();
+      const fimExistente = new Date(agendamento.horarioFim).getTime();
+      return inicio < fimExistente + this.intervaloMinimoMs &&
+        fim + this.intervaloMinimoMs > inicioExistente;
+    });
+  } 
+
+  private async verificarExistencia(agendamento: Agendamento): Promise<boolean> {
+    const [cliente, prestador, agendamentos] = await Promise.all([
+      this.clienteService.obterClientePorId(agendamento.idCliente),
+      this.prestadorService.obterPrestadorPorId(agendamento.idPrestador),
+      this.obterAgendamentos(),
+    ]); 
+
+    if (!cliente || !prestador)
+      return false;
+
+    const agendamentoExistente = agendamentos.find((agen: Agendamento) =>
+      agen.idCliente === agendamento.idCliente &&
+      agen.idPrestador === agendamento.idPrestador &&
+      agen.idServico === agendamento.idServico
+    );
+    return !!agendamentoExistente;
+  }
+
+  private criarAgendamento(dados: Agendamento): Agendamento {
+    return new Agendamento(
+      dados.id,
+      dados.idCliente,
+      dados.idPrestador,
+      dados.idServico,
+      new Date(dados.horarioInicio),
+      new Date(dados.horarioFim),
+      dados.status
+    );
   }
 }

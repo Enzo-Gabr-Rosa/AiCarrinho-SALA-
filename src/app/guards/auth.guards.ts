@@ -10,7 +10,7 @@ export const authGuard: CanActivateFn = () => {
   return autenticacao.estaLogado() || router.navigate(['/login']);
 };
 
-export const papelGuard: CanActivateFn = (route) => {
+export const tipoGuard: CanActivateFn = (route) => {
   const autenticacao = inject(autenticacaoService);
   const router = inject(Router);
   const usuario = autenticacao.obterUsuarioAtual();
@@ -19,8 +19,8 @@ export const papelGuard: CanActivateFn = (route) => {
     return router.navigate(['/login']);
   }
 
-  const tipoRequerido = route.data['papel'] as Usuario['tipoUsuario'] | undefined;
-  if (!tipoRequerido || usuario.tipoUsuario === tipoRequerido) {
+  const tipoRequerido = route.data['tipo'] as Usuario['tipoUsuario'];
+  if (usuario.tipoUsuario === tipoRequerido) {
     return true;
   }
 

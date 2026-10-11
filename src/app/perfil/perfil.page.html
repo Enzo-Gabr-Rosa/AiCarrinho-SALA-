@@ -49,7 +49,7 @@
           <ion-input placeholder="Telefone" [(ngModel)]="usuarioEdicao.Telefone"></ion-input>
         </div>
 
-        <ion-button color="danger" class="botao-excluir" (click)="excluirPerfil()" position="bottom">Excluir
+        <ion-button color="danger" class="botao-excluir" (click)="excluirPerfil()" [disabled]="excluindoPerfil" position="bottom">Excluir
           Perfil</ion-button>
       </div>
     </ng-template>

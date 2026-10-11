@@ -46,6 +46,11 @@ padding: 16px;
 
 
 /* Lista de prestadores */
+.busca-servicos {
+  margin: 1% 20% 16px;
+  color: var(--Bright-Snow);
+}
+
 .lista-prestadores {
 display: flex;
 flex-direction: column;
@@ -80,6 +85,18 @@ font-weight: 600;
 margin: 4px 0;
 font-size: 1.1rem;
 color: var(--Bright-Snow);
+}
+
+.perfil-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--Bright-Snow);
+  font-family: "Cinzel-Bold", serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
 }
 
 /* Descrição e estado vazio */
@@ -154,8 +171,17 @@ background-color: var(--Violet-Twillight);
 color: var(--Bright-Snow);
 }
 
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
+.busca-servicos {
+  margin: 1% 4% 16px;
+}
+
 .prestador-card {
 margin: 1% 4%;
 }

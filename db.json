@@ -19,6 +19,8 @@
       "tipoUsuario": "Cliente"
     }
   ],
+  "administradores": [],
+  "usuariosExcluidos": [],
   "prestadores": [
     {
       "id": "1",

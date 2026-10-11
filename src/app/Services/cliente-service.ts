@@ -1,42 +1,32 @@
 import { inject, Injectable } from '@angular/core';
 import { Cliente } from '../Modelos/cliente-modelo';
-import { UsuarioExclusao } from './exclusao-service';
 import { Usuario } from '../Modelos/usuario-modelo';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { cpf } from 'cpf-cnpj-validator';
 
 @Injectable({
   providedIn: 'root',
 })
 export class clienteService {
   private http = inject(HttpClient);
-  private clientes: Cliente[] = [];
-  private exclusaoService: UsuarioExclusao = inject(UsuarioExclusao);
   private api = `${environment.api}/clientes`;
   
-  constructor() {
-    this.carregarClientes();
-  }
-
-  private carregarClientes() {
-    this.http.get<Cliente[]>(this.api).subscribe({
-      next: (dados) => { //escrever as variaveis em arrow function de forma mais clara
-        this.clientes = dados.map(d => new Cliente(d.id, d.CPF, d.Nome, d.Telefone, d.Email, d.Senha));
-      },
-      error: () => {
-        this.clientes = [];
-      }
+  //________________________________________________________
+  //CRUD
+  public async obterClientes(): Promise<Cliente[]> {
+    const dados = await firstValueFrom(this.http.get<Cliente[]>(this.api));
+    const clientes: Cliente[] = [];
+    dados.forEach((cliente: Cliente) => {
+      clientes.push(new Cliente(cliente.id, cliente.CPF, cliente.Nome, cliente.Telefone, cliente.Email, cliente.Senha));
     });
+    return clientes;
   }
 
-  //Cliente
-  public obterClientes() {
-    return Object.freeze([...this.clientes]);
-  }
-  
-  public adicionar(usuario: Usuario): boolean { 
+  public async adicionar(usuario: Usuario): Promise<Cliente | null> {
     const cliente = new Cliente(
-      usuario.id,
+      await this.novoId(),
       usuario.CPF,
       usuario.Nome,
       usuario.Telefone,
@@ -44,96 +34,70 @@ export class clienteService {
       usuario.Senha
     );
     
-    if(this.verificarExistencia(usuario)){
-      return false;
+    try {
+      if (await this.verificarCPF(usuario.CPF)) {
+        return null;
+      }
+
+      const criado = await firstValueFrom(this.http.post<Cliente>(this.api, {
+        CPF: cliente.CPF,
+        Nome: cliente.Nome,
+        Telefone: cliente.Telefone,
+        Email: cliente.Email,
+        Senha: cliente.Senha,
+      }));
+      return new Cliente(criado.id, criado.CPF, criado.Nome, criado.Telefone, criado.Email, criado.Senha);
+    } catch {
+      return null;
     }
-    
-    // Criar no servidor
-    this.http.post<Cliente>(this.api, {
-      id: cliente.id,
-      CPF: cliente.CPF,
-      Nome: cliente.Nome,
-      Telefone: cliente.Telefone,
-      Email: cliente.Email,
-      Senha: cliente.Senha
-    }).subscribe({
-      next: () => {
-        this.clientes.push(cliente);
-      },
-      error: () => {
-        console.error('Erro ao adicionar cliente no servidor. Adicionando localmente.');
-        this.clientes.push(cliente);
-      }
-    });
-    return true;
-  }
-  
-  public excluir(cliente: Cliente): boolean {
-    const usuarioExcluido = {
-      id: cliente.id,
-      CPF: cliente.CPF,
-      Nome: cliente.Nome,
-      Telefone: cliente.Telefone,
-      Email: cliente.Email,
-      Senha: cliente.Senha,
-      tipoUsuario: cliente.tipoUsuario,
-      excluidoEm: new Date(), 
-    };
-    
-    // Deletar do servidor
-    this.http.delete(`${this.api}/${cliente.id}`).subscribe({
-      next: () => {
-        const index = this.clientes.indexOf(cliente);
-        if (index > -1) {
-          this.clientes.splice(index, 1);
-        }
-      },
-      error: () => {
-        console.error('Erro ao excluir cliente no servidor.');
-      }
-    });
-    return this.exclusaoService.excluir(usuarioExcluido);
   }
 
+  public async excluir(cliente: Cliente): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.delete(`${this.api}/${cliente.id}`));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  //________________________________________________________
+  //Pesquisadores
+  public async obterClientePorCPF(cpfInformado: string): Promise<Cliente | undefined> {
+    const clientes = await this.obterClientes();
+    return clientes.find(cliente => cpf.strip(cliente.CPF) === cpf.strip(cpfInformado));
+  }
+  public async obterClientePorNome(nome: string): Promise<Cliente | undefined> {
+    const clientes = await this.obterClientes();
+    return clientes.find(cliente => cliente.Nome.toLocaleLowerCase() === nome.toLocaleLowerCase());
+  }
+
+  public async obterClientePorId(id: number): Promise<Cliente | undefined> {
+    const clientes = await this.obterClientes();
+    return clientes.find(cliente => String(cliente.id) === String(id));
+  }
+
+
+  //________________________________________________________
+  //Verificadores
+  public async verificarCPF(CPF: string): Promise<boolean> {
+    const cpfNormalizado = cpf.strip(CPF);
+    const clientes = await this.obterClientes();
+    return clientes.some(cliente => cpf.strip(cliente.CPF) === cpfNormalizado);
+  }
+
+  //________________________________________________________
   //Complementares
-  private verificarExistencia(usuario: Usuario): boolean {
-    if(this.verificarCPF(usuario.CPF)){
-        return true;
-      } else if(this.verificarExclusao(usuario.id, 'Cliente')){
-        return true;
-      }
-      return false;
-  }
-  
-  public criarNovoID() {
-    let i = 1;
-    for(let cliente of this.clientes){
-        if(i === cliente.id || this.verificarExclusao(i, 'Cliente')){
-            i++
-        } else {
-            return i;
-        }
+  private async novoId(): Promise<number> {
+    const clientes = await this.obterClientes();
+    const ids:number[] = [];
+    clientes.forEach(cliente => {
+      ids.push(cliente.id);
+    });
+    if(ids.length === 0){
+      return -1;
     }
-    return i;
+    return Math.max(...ids) + 1;
   }
-  
-  public obterClientePorNome(nome: string) {
-     return this.clientes.find((cliente) =>  cliente.Nome.toLowerCase() === nome.toLocaleLowerCase());
-  }
-  
-  public obterClientePorId(id: number) {
-    return this.clientes.find((cliente) =>  cliente.id === id);
-  }
-  
-  public verificarCPF(CPF: string): boolean {
-    const cliente = this.clientes.find((cliente) =>  cliente.CPF.split(/[.-]/).join('') === CPF);
-    if(!cliente)
-      return false;
 
-    return true;
-  }
-  
-  private verificarExclusao(id: number, tipoUsuario:'Cliente'): boolean {
-    return this.exclusaoService.verificarExclusao(id, tipoUsuario);
-  }
 }

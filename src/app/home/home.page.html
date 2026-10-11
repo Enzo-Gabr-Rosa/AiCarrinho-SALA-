@@ -5,21 +5,31 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="home-page">
+  <section class="busca-servicos">
+    <ion-input
+      label="Pesquisar prestadores ou serviços"
+      labelPlacement="stacked"
+      fill="outline"
+      type="search"
+      [(ngModel)]="termoBusca"
+      (ionChange)="filtrarPrestadores()">
+    </ion-input>
+  </section>
 
   <section class="lista-prestadores">
-    @for (prestador of prestadores; track prestador.id) {
+    @for (prestador of prestadores; track $index) {
       <article class="prestador-card">
         <header class="prestador-header">
           <div>
-            <h2 (click)="goToPrestador()">{{ prestador.Nome }}</h2>
+            <button class="perfil-link" type="button" (click)="goToPrestador(prestador)">{{ prestador.Nome }}</button>
             <p class="descricao">{{ prestador.Descricao.trim() || 'Sem descrição cadastrada no momento.' }}</p>
           </div>
           <span class="chip">{{ prestador.Servicos.length || 0 }} serviços</span>
         </header>
 
-        @if (prestador.Servicos.length) {
+        @if (servicosFiltrados(prestador).length) {
           <div class="servicos-lista">
-            @for (servico of prestador.Servicos; track servico.id) {
+            @for (servico of servicosFiltrados(prestador); track servico.id) {
               <article class="servico-card">
                 <h3 >{{ servico.nome }}</h3>
                 <p>{{ servico.descricao }}</p>
@@ -28,7 +38,12 @@
                 </span>
               </article>
               @if(usuario?.tipoUsuario === 'Cliente') {
-                <button class="btn btn-outline" (click)="agendarServico(prestador, servico)">Agendar Serviço</button>
+                <button
+                  class="btn btn-outline"
+                  [disabled]="agendamentoJaExiste(prestador, servico)"
+                  (click)="agendarServico(prestador, servico)">
+                  {{ textoBotaoAgendamento(prestador, servico) }}
+                </button>
               }
             }
           </div>
@@ -36,6 +51,10 @@
           <p class="estado-vazio">Nenhum serviço cadastrado para este prestador.</p>
         }
       </article>
+    } @empty {
+      <p class="estado-vazio">
+        {{ termoBusca ? 'Nenhum prestador ou serviço corresponde à pesquisa.' : 'Nenhum prestador disponível.' }}
+      </p>
     }
   </section>
 </ion-content>
