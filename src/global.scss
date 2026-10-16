@@ -35,3 +35,77 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* =========================================================
+   POPOVER DO SELECT — TEMA ESCURO
+   ========================================================= */
+
+ion-popover.select-popover {
+  --background: #121019;
+  --color: #f4f0ff;
+  --width: 260px;
+  --max-width: calc(100vw - 32px);
+
+  --box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(167, 139, 250, 0.15);
+
+  --backdrop-opacity: 0.25;
+}
+
+ion-popover.select-popover::part(content) {
+  overflow: hidden;
+
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  border-radius: 14px;
+}
+
+/* Lista de opções */
+
+ion-popover.select-popover ion-list {
+  margin: 0;
+  padding: 6px;
+
+  background: #121019;
+}
+
+/* Cada opção */
+
+ion-popover.select-popover ion-item {
+  --background: transparent;
+  --color: #d8d1e8;
+  --border-color: transparent;
+  --min-height: 48px;
+
+  margin: 3px 0;
+
+  border-radius: 9px;
+
+  font-size: 13px;
+
+  transition: background 0.2s ease;
+}
+
+/* Opção selecionada */
+
+ion-popover.select-popover ion-item.item-radio-checked {
+  --background: rgba(124, 77, 255, 0.18);
+  --color: #c4b5fd;
+
+  font-weight: 600;
+}
+
+/* Interação com as opções */
+
+ion-popover.select-popover ion-item:hover {
+  --background: rgba(124, 77, 255, 0.12);
+}
+
+/* Indicador de seleção */
+
+ion-popover.select-popover ion-radio {
+  --color: #62577c;
+  --color-checked: #a78bfa;
+
+  margin-inline-end: 8px;
+}

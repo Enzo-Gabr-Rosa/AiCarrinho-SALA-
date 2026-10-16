@@ -1,60 +1,291 @@
-<ion-header [translucent]="true">
+<ion-header class="home-header">
   <ion-toolbar>
-    <ion-title>Serviços disponíveis</ion-title>
+    <div class="toolbar-content">
+      <div class="brand">
+        <span class="brand-icon">AC</span>
+
+        <div class="brand-text">
+          <ion-title>AiCarrinho</ion-title>
+          <span class="brand-subtitle">AGENDAMENTO AUTOMOTIVO</span>
+        </div>
+      </div>
+
+      <div class="toolbar-label">
+        <span class="status-dot"></span>
+        Serviços disponíveis
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="home-page">
-  <section class="busca-servicos">
-    <ion-input
-      label="Pesquisar prestadores ou serviços"
-      labelPlacement="stacked"
-      fill="outline"
-      type="search"
-      [(ngModel)]="termoBusca"
-      (ionChange)="filtrarPrestadores()">
-    </ion-input>
-  </section>
 
-  <section class="lista-prestadores">
-    @for (prestador of prestadores; track $index) {
-      <article class="prestador-card">
-        <header class="prestador-header">
-          <div>
-            <button class="perfil-link" type="button" (click)="goToPrestador(prestador)">{{ prestador.Nome }}</button>
-            <p class="descricao">{{ prestador.Descricao.trim() || 'Sem descrição cadastrada no momento.' }}</p>
-          </div>
-          <span class="chip">{{ prestador.Servicos.length || 0 }} serviços</span>
-        </header>
+  <main class="home-container">
 
-        @if (servicosFiltrados(prestador).length) {
-          <div class="servicos-lista">
-            @for (servico of servicosFiltrados(prestador); track servico.id) {
-              <article class="servico-card">
-                <h3 >{{ servico.nome }}</h3>
-                <p>{{ servico.descricao }}</p>
-                <span class="horario">
-                  Horário: {{ formatDate(servico.horarioInicio) }} às {{ formatDate(servico.horarioFim) }}
-                </span>
-              </article>
-              @if(usuario?.tipoUsuario === 'Cliente') {
-                <button
-                  class="btn btn-outline"
-                  [disabled]="agendamentoJaExiste(prestador, servico)"
-                  (click)="agendarServico(prestador, servico)">
-                  {{ textoBotaoAgendamento(prestador, servico) }}
-                </button>
-              }
-            }
+    <!-- Apresentação -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <span class="section-eyebrow">
+          <span class="eyebrow-line"></span>
+          SEU CARRO EM BOAS MÃOS
+        </span>
+
+        <h1>
+          Encontre o serviço<br>
+          ideal para <span>seu veículo.</span>
+        </h1>
+
+        <p class="hero-description">
+          Explore os prestadores disponíveis, conheça os serviços
+          e encontre um horário para cuidar do seu carro.
+        </p>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="stat-number">
+              {{ prestadores.length.toString().padStart(2, '0') }}
+            </span>
+            <span class="stat-label">Prestadores</span>
           </div>
-        } @else {
-          <p class="estado-vazio">Nenhum serviço cadastrado para este prestador.</p>
+
+          <div class="stat-divider"></div>
+
+          <div class="hero-stat">
+            <span class="stat-number">
+              {{ quantidadeServicos() }}
+            </span>
+            <span class="stat-label">Serviços</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-decoration" aria-hidden="true">
+        <div class="decoration-ring ring-one"></div>
+        <div class="decoration-ring ring-two"></div>
+        <div class="decoration-core">AC</div>
+        <span class="decoration-caption">AiCarrinho · AUTOMOTIVO</span>
+      </div>
+    </section>
+
+    <!-- Pesquisa -->
+    <section class="search-section">
+      <div class="section-heading">
+        <div>
+          <span class="section-eyebrow">EXPLORE</span>
+          <h2>Encontre seu serviço</h2>
+        </div>
+
+        <span class="results-counter">
+          {{ filtrarPrestadores().length }}
+          {{ filtrarPrestadores().length === 1 ? 'resultado' : 'resultados' }}
+        </span>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon" aria-hidden="true"></span>
+
+        <!-- Critério da pesquisa -->
+        <select class="search-filter" aria-label="Escolher critério de pesquisa" [(ngModel)]="criterioBusca"
+          (ngModelChange)="alterarCriterioBusca()">
+          <option value="nome">Nome do prestador</option>
+          <option value="servico">Serviço</option>
+          <option value="data">Data</option>
+        </select>
+
+        <!-- Pesquisa por nome ou serviço -->
+        @if (criterioBusca !== 'data') {
+        <ion-input class="search-input" [label]="criterioBusca === 'nome' ? 'Nome do prestador' : 'Nome do serviço'"
+          labelPlacement="stacked" [placeholder]="criterioBusca === 'nome'
+          ? 'Digite o nome do prestador...'
+          : 'Digite o serviço desejado...'" type="search" fill="outline" [(ngModel)]="termoBusca"></ion-input>
         }
-      </article>
-    } @empty {
-      <p class="estado-vazio">
-        {{ termoBusca ? 'Nenhum prestador ou serviço corresponde à pesquisa.' : 'Nenhum prestador disponível.' }}
-      </p>
+
+        <!-- Pesquisa por data -->
+        @if (criterioBusca === 'data') {
+        <div class="date-search">
+          <label for="dataBusca">Data desejada</label>
+
+          <input id="dataBusca" class="search-date" type="date" [(ngModel)]="dataBusca"
+            aria-label="Selecionar data desejada" />
+        </div>
+        }
+
+        <!-- Limpar pesquisa -->
+        @if (temFiltro()) {
+        <button type="button" class="clear-search" aria-label="Limpar pesquisa" (click)="limparPesquisa()">
+          ×
+        </button>
+        }
+      </div>
+    </section>
+
+    <!-- Carregamento -->
+    @if (carregando) {
+    <section class="loading-section" aria-live="polite">
+      <div class="loading-indicator"></div>
+
+      <h2>Preparando sua experiência</h2>
+
+      <p>Estamos carregando os prestadores e serviços disponíveis.</p>
+
+      <div class="skeleton-list">
+        @for (item of [1, 2, 3]; track item) {
+        <article class="skeleton-card">
+          <div class="skeleton-header">
+            <div class="skeleton-block skeleton-name"></div>
+            <div class="skeleton-block skeleton-chip"></div>
+          </div>
+
+          <div class="skeleton-block skeleton-description"></div>
+          <div class="skeleton-block skeleton-description short"></div>
+
+          <div class="skeleton-service">
+            <div class="skeleton-block skeleton-service-title"></div>
+            <div class="skeleton-block skeleton-description"></div>
+            <div class="skeleton-block skeleton-time"></div>
+          </div>
+        </article>
+        }
+      </div>
+    </section>
+    } @else {
+
+    <!-- Lista de prestadores -->
+    <section class="providers-section">
+
+      <div class="providers-heading">
+        <div>
+          <span class="section-eyebrow">PARCEIROS AICARRINHO </span>
+          <h2>Prestadores disponíveis</h2>
+        </div>
+      </div>
+
+      <div class="lista-prestadores">
+
+        @for (prestador of filtrarPrestadores(); track prestador.id) {
+        <article class="prestador-card">
+
+          <header class="prestador-header">
+            <div class="provider-identity">
+              <div class="provider-avatar" aria-hidden="true">
+                {{ prestador.Nome.charAt(0).toUpperCase() }}
+              </div>
+
+              <div class="provider-information">
+                <span class="provider-label">PRESTADOR</span>
+
+                <button class="perfil-link" type="button" (click)="goToPrestador(prestador)">
+                  {{ prestador.Nome }}
+                </button>
+
+                <p class="descricao">
+                  {{ prestador.Descricao.trim() || 'Sem descrição cadastrada no momento.' }}
+                </p>
+              </div>
+            </div>
+
+            <span class="chip">
+              <span class="chip-dot"></span>
+              {{ prestador.Servicos.length || 0 }}
+              {{ prestador.Servicos.length === 1 ? 'serviço' : 'serviços' }}
+            </span>
+          </header>
+
+          <div class="provider-divider"></div>
+
+          @if (servicosFiltrados(prestador).length) {
+          <div class="servicos-lista">
+
+            @for (servico of servicosFiltrados(prestador); track servico.id) {
+            <article class="servico-card">
+
+              <div class="service-topline">
+                <span class="service-category">SERVIÇO AUTOMOTIVO</span>
+
+                <span class="service-indicator"></span>
+              </div>
+
+              <h3>{{ servico.nome }}</h3>
+
+              <p class="service-description">
+                {{ servico.descricao }}
+              </p>
+
+              <div class="service-schedule">
+                <span class="schedule-icon" aria-hidden="true">
+                  ◷
+                </span>
+
+                <div class="schedule-information">
+                  <span class="schedule-label">HORÁRIO DISPONÍVEL</span>
+
+                  <span class="horario">
+                    {{ formatDate(servico.horarioInicio) }}
+                    <span class="schedule-separator">—</span>
+                    {{ formatDate(servico.horarioFim) }}
+                  </span>
+                </div>
+              </div>
+
+              @if (usuario?.tipoUsuario === 'Cliente') {
+              <button class="btn btn-outline" type="button"
+                [class.booking-completed]="agendamentoJaExiste(prestador, servico)"
+                [disabled]="agendamentoJaExiste(prestador, servico)" (click)="agendarServico(prestador, servico)">
+
+                <span>
+                  {{ textoBotaoAgendamento(prestador, servico) }}
+                </span>
+
+                <span class="button-arrow">
+                  {{ agendamentoJaExiste(prestador, servico) ? '✓' : '→' }}
+                </span>
+              </button>
+              }
+
+            </article>
+            }
+
+          </div>
+          } @else {
+          <div class="estado-vazio service-empty">
+            <span class="empty-icon">⌕</span>
+            <p>Nenhum serviço corresponde à pesquisa deste prestador.</p>
+          </div>
+          }
+
+        </article>
+        } @empty {
+        <div class="estado-vazio empty-results">
+          <div class="empty-illustration">⌕</div>
+
+          <h3>
+            {{ temFiltro() ? 'Nenhum resultado encontrado' : 'Nenhum prestador disponível' }}
+          </h3>
+
+          <p>
+            {{
+            temFiltro()
+            ? 'Nenhum resultado corresponde aos critérios selecionados. Tente outra pesquisa.'
+            : 'Os prestadores aparecerão aqui quando estiverem disponíveis.'
+            }}
+          </p>
+
+          @if (temFiltro()) {
+          <button type="button" class="empty-action" (click)="termoBusca = ''">
+            Limpar pesquisa
+          </button>
+          }
+        </div>
+        }
+
+      </div>
+    </section>
     }
-  </section>
+
+    <footer class="home-footer">
+      <span class="footer-brand">AiCarrinho</span>
+      <span>Agendamento de Lavagem Automotiva</span>
+    </footer>
+
+  </main>
 </ion-content>

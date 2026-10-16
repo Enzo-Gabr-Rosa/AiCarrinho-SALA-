@@ -1,9 +1,25 @@
 <ion-app>
-  <ion-router-outlet>
-  </ion-router-outlet>
-  <div id="nav-bar" *ngIf="mostrarNavBar">
-<ion-button class="efeito-off" (click)="goToHome()"><ion-icon class="icone-branco" name="home-outline"></ion-icon></ion-button>
+  <ion-router-outlet></ion-router-outlet>
 
-<ion-button class="efeito-off" (click)="goToPerfil()"><ion-icon class="icone-branco" name="person-outline"></ion-icon></ion-button>
-</div>
+  <nav id="nav-bar" *ngIf="mostrarNavBar">
+    <button
+      class="nav-item"
+      [class.nav-item-ativo]="paginaAtiva === 'home'"
+      aria-label="Página inicial"
+      (click)="goToHome()"
+    >
+      <ion-icon name="home-outline"></ion-icon>
+      <span>Início</span>
+    </button>
+
+    <button
+      class="nav-item"
+      [class.nav-item-ativo]="paginaAtiva === 'perfil'"
+      aria-label="Meu perfil"
+      (click)="goToPerfil()"
+    >
+      <ion-icon name="person-outline"></ion-icon>
+      <span>Perfil</span>
+    </button>
+  </nav>
 </ion-app>

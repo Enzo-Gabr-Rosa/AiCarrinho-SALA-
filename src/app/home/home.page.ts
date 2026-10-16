@@ -1,3 +1,4 @@
+import { animate, stagger } from 'animejs';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonInput } from '@ionic/angular/standalone';
@@ -20,9 +21,12 @@ import { autenticacaoService } from '../Services/autenticacao-service';
 export class HomePage {
   private prestadorService: prestadorService = inject(prestadorService);
   private agendamentoService: agendamentoService = inject(agendamentoService);
+  protected carregando = true;
   protected prestadores: readonly Prestador[] = [];
   protected agendamentos: readonly Agendamento[] = [];
   protected termoBusca = '';
+  protected criterioBusca: 'nome' | 'servico' | 'data' = 'nome';
+  protected dataBusca = '';
   private router = inject(Router);
   private toastController = inject(ToastController);
   private autenticacaoService = inject(autenticacaoService);
@@ -34,48 +38,131 @@ export class HomePage {
       this.router.navigate(['/login']);
     }
   }
+
   async ionViewWillEnter() {
-    [this.prestadores, this.agendamentos] = await Promise.all([
-      this.prestadorService.obterPrestadores(),
-      this.agendamentoService.obterAgendamentos()
-    ]);
+    this.carregando = true;
+
+    try {
+      [this.prestadores, this.agendamentos] = await Promise.all([
+        this.prestadorService.obterPrestadores(),
+        this.agendamentoService.obterAgendamentos()
+      ]);
+
+      this.carregando = false;
+
+      // Aguarda a atualização do HTML antes de iniciar as animações.
+      requestAnimationFrame(() => {
+        this.animarElementos();
+      });
+
+    } catch (erro) {
+      console.error('Erro ao carregar a Home:', erro);
+      this.carregando = false;
+    }
   }
 
   protected filtrarPrestadores(): readonly Prestador[] {
-    const termo = this.normalizarBusca(this.termoBusca);
+  const termo = this.normalizarBusca(this.termoBusca);
+
+  if (this.criterioBusca === 'nome') {
     if (!termo) {
       return this.prestadores;
     }
 
-    return this.prestadores.filter((prestador) => {
-      const dadosPrestador = this.normalizarBusca(`${prestador.Nome} ${prestador.Descricao}`);
-      return dadosPrestador.includes(termo) ||
-        prestador.Servicos.some((servico) =>
-          this.normalizarBusca(`${servico.nome} ${servico.descricao}`).includes(termo)
-        );
-    });
+    return this.prestadores.filter(prestador =>
+      this.normalizarBusca(prestador.Nome).includes(termo)
+    );
   }
 
-  protected servicosFiltrados(prestador: Prestador): readonly Servico[] {
+  if (this.criterioBusca === 'servico') {
+    if (!termo) {
+      return this.prestadores;
+    }
+
+    return this.prestadores.filter(prestador =>
+      prestador.Servicos.some(servico =>
+        this.normalizarBusca(
+          `${servico.nome} ${servico.descricao}`
+        ).includes(termo)
+      )
+    );
+  }
+
+  if (!this.dataBusca) {
+    return this.prestadores;
+  }
+
+  return this.prestadores.filter(prestador =>
+    prestador.Servicos.some(servico =>
+      this.dataDoHorario(servico.horarioInicio) === this.dataBusca
+    )
+  );
+}
+
+protected servicosFiltrados(prestador: Prestador): readonly Servico[] {
+  if (this.criterioBusca === 'nome') {
     const termo = this.normalizarBusca(this.termoBusca);
+
+    if (!termo || this.normalizarBusca(prestador.Nome).includes(termo)) {
+      return prestador.Servicos;
+    }
+
+    return [];
+  }
+
+  if (this.criterioBusca === 'servico') {
+    const termo = this.normalizarBusca(this.termoBusca);
+
     if (!termo) {
       return prestador.Servicos;
     }
 
-    const dadosPrestador = this.normalizarBusca(`${prestador.Nome} ${prestador.Descricao}`);
-    if (dadosPrestador.includes(termo)) {
-      return prestador.Servicos;
-    }
-
-    return prestador.Servicos.filter((servico) =>
-      this.normalizarBusca(`${servico.nome} ${servico.descricao}`).includes(termo)
+    return prestador.Servicos.filter(servico =>
+      this.normalizarBusca(
+        `${servico.nome} ${servico.descricao}`
+      ).includes(termo)
     );
   }
+
+  if (!this.dataBusca) {
+    return prestador.Servicos;
+  }
+
+  return prestador.Servicos.filter(servico =>
+    this.dataDoHorario(servico.horarioInicio) === this.dataBusca
+  );
+}
 
   private normalizarBusca(valor: string): string {
     // Separa letras de seus acentos, remove as marcas, converte para minúsculas e tira espaços das extremidades para comparar buscas sem depender de acentuação ou caixa.
     return valor.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().trim();
   }
+
+  private dataDoHorario(horario: Date | string): string {
+  const data = new Date(horario);
+
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth() + 1).padStart(2, '0');
+  const dia = String(data.getDate()).padStart(2, '0');
+
+  return `${ano}-${mes}-${dia}`;
+}
+
+protected alterarCriterioBusca(): void {
+  this.termoBusca = '';
+  this.dataBusca = '';
+}
+
+protected temFiltro(): boolean {
+  return this.criterioBusca === 'data'
+    ? this.dataBusca !== ''
+    : this.termoBusca.trim() !== '';
+}
+
+protected limparPesquisa(): void {
+  this.termoBusca = '';
+  this.dataBusca = '';
+}
 
   async agendarServico(prestador: Prestador, servico: Servico) {
     if (!this.usuario || this.usuario.tipoUsuario !== 'Cliente') {
@@ -102,7 +189,7 @@ export class HomePage {
       status: "Pendente" as 'Pendente' | 'Confirmado' | 'Cancelado'
     };
     const sucesso = await this.agendamentoService.adicionar(agendamento);
-    console.log( `Agendamento ${sucesso ? 'realizado' : 'falhou'}:`, agendamento);
+    console.log(`Agendamento ${sucesso ? 'realizado' : 'falhou'}:`, agendamento);
     if (sucesso) {
       this.agendamentos = await this.agendamentoService.obterAgendamentos();
       await this.mostrarToast('Agendamento realizado com sucesso!');
@@ -163,5 +250,37 @@ export class HomePage {
     });
 
     await toast.present();
+  }
+
+  private animarElementos() {
+    const prestadores = document.querySelectorAll('.prestador-card');
+    const servicos = document.querySelectorAll('.servico-card');
+
+    if (prestadores.length > 0) {
+      animate(prestadores, {
+        opacity: [0, 1],
+        translateY: [22, 0],
+        duration: 650,
+        delay: stagger(100),
+        ease: 'outExpo'
+      });
+    }
+
+    if (servicos.length > 0) {
+      animate(servicos, {
+        opacity: [0, 1],
+        translateY: [12, 0],
+        duration: 450,
+        delay: stagger(45),
+        ease: 'outQuad'
+      });
+    }
+  }
+
+  protected quantidadeServicos(): number {
+    return this.prestadores.reduce(
+      (total, prestador) => total + (prestador.Servicos?.length ?? 0),
+      0
+    );
   }
 }

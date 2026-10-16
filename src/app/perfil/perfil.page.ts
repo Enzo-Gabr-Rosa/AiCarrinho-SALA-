@@ -1,3 +1,4 @@
+import { animate, stagger } from 'animejs';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -44,6 +45,11 @@ export class PerfilPage implements OnInit {
     this.usuarioEdicao = { ...this.usuario };
     this.tipoUsuario = this.usuario.tipoUsuario;
   }
+
+  ionViewDidEnter() {
+    this.animarPerfil();
+  }
+
   ionViewWillEnter() {
     this.usuario = this.autenticacaoService.obterUsuarioAtual();
     if (!this.usuario) {
@@ -154,6 +160,35 @@ imagemErro(event: Event) {
 
   img.onerror = null;
   img.src = 'assets/imgs/Foto User.png';
+}
+
+private animarPerfil() {
+  const elementos = document.querySelectorAll(
+    '.page-intro, .profile-card, .information-section, .actions-section, .profile-footer'
+  );
+
+  if (!elementos.length) {
+    return;
+  }
+
+  animate(elementos, {
+    opacity: [0, 1],
+    translateY: [18, 0],
+    duration: 650,
+    delay: stagger(100),
+    ease: 'outExpo'
+  });
+
+  const foto = document.querySelector('.profile-photo-wrapper');
+
+  if (foto) {
+    animate(foto, {
+      scale: [0.88, 1],
+      duration: 700,
+      delay: 150,
+      ease: 'outBack'
+    });
+  }
 }
 
 }

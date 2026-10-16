@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormsModule, ValidationErrors, ValidatorFn, Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { IonContent, IonText, IonImg, IonButton, IonInput, IonSelectOption, IonSelect } from '@ionic/angular/standalone';
@@ -42,7 +42,7 @@ const telefoneValidator: ValidatorFn = (control: AbstractControl): ValidationErr
   imports: [IonInput, IonButton, IonSelect, IonSelectOption, IonContent, IonText, IonImg, CommonModule, FormsModule, ReactiveFormsModule]
 })
 
-export class LoginPage {
+export class LoginPage implements AfterViewInit {
   private clienteService = inject(clienteService);
   private administradorService = inject(administradorService);
   private prestadorService = inject(prestadorService);
@@ -172,6 +172,30 @@ export class LoginPage {
     await this.mostrarToast('Tipo de usuário inválido');
     this.cadastroUsuarioForm.reset();
   }
+
+  ngAfterViewInit() {
+  const hero = document.querySelector('#hero-section');
+  const form = document.querySelector('#form-container');
+
+  if (hero) {
+    animate(hero, {
+      opacity: [0, 1],
+      translateY: [18, 0],
+      duration: 900,
+      ease: 'outExpo'
+    });
+  }
+
+  if (form) {
+    animate(form, {
+      opacity: [0, 1],
+      translateY: [20, 0],
+      duration: 900,
+      delay: 150,
+      ease: 'outExpo'
+    });
+  }
+}
 
   protected trocarFormulario() {
     const login = document.querySelector('#login-content') as HTMLElement;

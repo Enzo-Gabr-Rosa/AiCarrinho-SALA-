@@ -1,155 +1,357 @@
-<ion-content [fullscreen]="true">
-  <ion-img src="../../assets/imgs/Hero Image.png" id="hero-image"></ion-img>
+<ion-content [fullscreen]="true" class="auth-page">
 
-  <div class="form-container">
+  <main class="auth-layout">
 
-    <div id="auth-card">
+    <!-- APRESENTAÇÃO VISUAL -->
+    <section class="hero-section" id="hero-section">
 
-      <!-- LOGIN -->
-      <form
-        [formGroup]="loginForm"
-        (ngSubmit)="login()"
-        id="login-content"
-        #loginFormEl>
+      <div class="hero-background"></div>
 
-        <ion-text>
-          <h1 id="title">LOGIN</h1>
-        </ion-text>
-
-        <div id="login-form">
-          <ion-input
-            label="CPF:"
-            fill="underline"
-            class="input-custom"
-            type="text"
-            inputmode="numeric"
-            formControlName="CPF">
-          </ion-input>
-
-          <ion-text color="danger" *ngIf="loginForm.controls.CPF.touched && loginForm.controls.CPF.invalid">
-            Informe um CPF válido.
-          </ion-text>
-
-          <ion-input
-            label="SENHA:"
-            fill="underline"
-            class="input-custom"
-            type="password"
-            formControlName="Senha">
-          </ion-input>
-
-          <ion-text>
-            NÃO POSSUÍ UMA CONTA?
-            <span
-              (click)="trocarFormulario()"
-              id="toggle-form">
-              CADASTRE-SE
-            </span>
-          </ion-text>
+      <header class="brand-header">
+        <div class="brand-mark">
+          <span class="brand-symbol">AC</span>
         </div>
 
-        <ion-button type="submit">
-          ENTRAR
-        </ion-button>
+        <div class="brand-information">
+          <span class="brand-name">AiCarrinho</span>
+          <span class="brand-description">LAVAGEM AUTOMOTIVA</span>
+        </div>
+      </header>
 
-      </form>
+      <div class="hero-content">
 
-      <!-- CADASTRO -->
-      <form
-        [formGroup]="cadastroUsuarioForm"
-        (ngSubmit)="cadastrarUsuario()"
-        id="cadastro-content"
-        class="display-off"
-        #cadastroFormEl>
+        <span class="hero-eyebrow">
+          CUIDADO AUTOMOTIVO
+        </span>
 
-        <ion-text>
-          <h1 id="title">CADASTRO</h1>
-        </ion-text>
+        <h2>
+          Seu carro merece
+          <span>o melhor cuidado.</span>
+        </h2>
 
-        <div id="cadastro-form">
+        <p>
+          Agende sua lavagem com praticidade e tenha
+          mais tempo para o que realmente importa.
+        </p>
 
-          <ion-input
-            label="USUÁRIO:"
-            fill="underline"
-            class="input-custom"
-            type="text"
-            formControlName="Nome">
-          </ion-input>
+        <div class="hero-divider"></div>
 
-          <ion-input
-            label="EMAIL:"
-            fill="underline"
-            class="input-custom"
-            type="text"
-            formControlName="Email">
-          </ion-input>
+        <div class="hero-features">
 
-          <ion-input
-            label="TELEFONE:"
-            fill="underline"
-            class="input-custom"
-            type="text"
-            formControlName="Telefone">
-          </ion-input>
-          <ion-text color="danger" *ngIf="cadastroUsuarioForm.controls.Telefone.touched && cadastroUsuarioForm.controls.Telefone.invalid">
-            Informe um telefone brasileiro válido com DDD.
-          </ion-text>
+          <div class="feature-item">
+            <div class="feature-icon">
+              <span>01</span>
+            </div>
 
-          <ion-input
-            label="CPF:"
-            fill="underline"
-            class="input-custom"
-            type="text"
-            formControlName="CPF">
-          </ion-input>
-          <ion-text color="danger" *ngIf="cadastroUsuarioForm.controls.CPF.touched && cadastroUsuarioForm.controls.CPF.invalid">
-            Informe um CPF válido.
-          </ion-text>
+            <div class="feature-information">
+              <strong>Agendamento fácil</strong>
+              <span>Praticidade em poucos passos.</span>
+            </div>
+          </div>
 
-          <ion-input
-            label="SENHA:"
-            fill="underline"
-            class="input-custom"
-            type="password"
-            formControlName="Senha">
-          </ion-input>
+          <div class="feature-item">
+            <div class="feature-icon">
+              <span>02</span>
+            </div>
 
-          <ion-select
-            label="TIPO USUÁRIO"
-            fill="underline"
-            class="input-custom"
-            formControlName="TipoUsuario">
+            <div class="feature-information">
+              <strong>Cuidado especializado</strong>
+              <span>Atenção aos detalhes do seu veículo.</span>
+            </div>
+          </div>
 
-            <ion-select-option value="Cliente">
-              Cliente
-            </ion-select-option>
+          <div class="feature-item">
+            <div class="feature-icon">
+              <span>03</span>
+            </div>
 
-            <ion-select-option value="Prestador">
-              Prestador de serviço
-            </ion-select-option>
-
-          </ion-select>
-
-          <ion-text>
-            JÁ POSSUÍ UMA CONTA?
-            <span
-              (click)="trocarFormulario()"
-              id="toggle-form">
-              LOGIN
-            </span>
-          </ion-text>
-
-          <br>
-
-          <ion-button type="submit">
-            CADASTRAR
-          </ion-button>
+            <div class="feature-information">
+              <strong>Mais conveniência</strong>
+              <span>Organize seus horários com facilidade.</span>
+            </div>
+          </div>
 
         </div>
 
-      </form>
+      </div>
 
-    </div>
+      <footer class="hero-footer">
+        <span>EXCELÊNCIA EM CADA DETALHE</span>
+        <span class="footer-line"></span>
+        <span>SALA © 2026</span>
+      </footer>
 
-  </div>
+    </section>
+
+
+    <!-- ÁREA DE AUTENTICAÇÃO -->
+    <section class="form-section">
+
+      <div class="form-container" id="form-container">
+
+        <div class="form-topbar">
+          <span class="form-label">ÁREA DO USUÁRIO</span>
+
+          <span class="status-indicator">
+            <span class="status-dot"></span>
+            ACESSO
+          </span>
+        </div>
+
+
+        <div id="auth-card">
+
+
+          <!-- LOGIN -->
+          <form [formGroup]="loginForm" (ngSubmit)="login()" id="login-content" #loginFormEl>
+
+            <div class="form-heading">
+
+              <span class="form-eyebrow">
+                BEM-VINDO DE VOLTA
+              </span>
+
+              <h1 class="form-title">
+                Fazer login<span>.</span>
+              </h1>
+
+              <p class="form-description">
+                Entre na sua conta para continuar.
+              </p>
+
+            </div>
+
+
+            <div id="login-form" class="form-fields">
+
+              <!-- CPF -->
+              <div class="field-group">
+
+                <ion-input label="CPF" labelPlacement="stacked" fill="outline" class="input-custom" type="text"
+                  inputmode="numeric" autocomplete="username" placeholder="000.000.000-00"
+                  formControlName="CPF"></ion-input>
+
+                <ion-text color="danger" class="field-error" *ngIf="
+                    loginForm.controls.CPF.touched &&
+                    loginForm.controls.CPF.invalid
+                  ">
+                  Informe um CPF válido.
+                </ion-text>
+
+              </div>
+
+
+              <!-- SENHA -->
+              <div class="field-group">
+
+                <ion-input label="Senha" labelPlacement="stacked" fill="outline" class="input-custom" type="password"
+                  autocomplete="current-password" placeholder="Digite sua senha" formControlName="Senha"></ion-input>
+
+                <ion-text color="danger" class="field-error" *ngIf="
+                    loginForm.controls.Senha.touched &&
+                    loginForm.controls.Senha.invalid
+                  ">
+                  Informe uma senha válida.
+                </ion-text>
+
+              </div>
+
+            </div>
+
+
+            <div class="form-switch">
+
+              <span>AINDA NÃO TEM UMA CONTA?</span>
+
+              <button type="button" class="toggle-form" (click)="trocarFormulario()">
+                CADASTRE-SE
+                <span class="toggle-arrow">↗</span>
+              </button>
+
+            </div>
+
+
+            <div class="form-actions">
+
+              <ion-button type="submit" expand="block" class="primary-button">
+                <span>ENTRAR NA CONTA</span>
+                <span class="button-arrow">→</span>
+              </ion-button>
+
+              <p class="form-legal">
+                SUA PRÓXIMA EXPERIÊNCIA COMEÇA AQUI.
+              </p>
+
+            </div>
+
+          </form>
+
+
+
+          <!-- CADASTRO -->
+          <form [formGroup]="cadastroUsuarioForm" (ngSubmit)="cadastrarUsuario()" id="cadastro-content"
+            class="display-off" #cadastroFormEl>
+
+            <div class="form-heading">
+
+              <span class="form-eyebrow">
+                FAÇA PARTE DA SALA
+              </span>
+
+              <h1 class="form-title">
+                Criar conta<span>.</span>
+              </h1>
+
+              <p class="form-description">
+                Preencha seus dados para começar.
+              </p>
+
+            </div>
+
+
+            <div id="cadastro-form" class="form-fields">
+
+              <!-- NOME -->
+              <div class="field-group">
+
+                <ion-input label="Nome completo" labelPlacement="stacked" fill="outline" class="input-custom"
+                  type="text" autocomplete="name" placeholder="Digite seu nome" formControlName="Nome"></ion-input>
+
+                <ion-text color="danger" class="field-error" *ngIf="
+                    cadastroUsuarioForm.controls.Nome.touched &&
+                    cadastroUsuarioForm.controls.Nome.invalid
+                  ">
+                  Informe um nome válido.
+                </ion-text>
+
+              </div>
+
+
+              <!-- EMAIL -->
+              <div class="field-group">
+
+                <ion-input label="E-mail" labelPlacement="stacked" fill="outline" class="input-custom" type="email"
+                  autocomplete="email" placeholder="seuemail@exemplo.com" formControlName="Email"></ion-input>
+
+                <ion-text color="danger" class="field-error" *ngIf="
+                    cadastroUsuarioForm.controls.Email.touched &&
+                    cadastroUsuarioForm.controls.Email.invalid
+                  ">
+                  Informe um e-mail válido.
+                </ion-text>
+
+              </div>
+
+
+              <!-- TELEFONE -->
+              <div class="field-group">
+
+                <ion-input label="Telefone" labelPlacement="stacked" fill="outline" class="input-custom" type="tel"
+                  inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000"
+                  formControlName="Telefone"></ion-input>
+
+                <ion-text color="danger" class="field-error" *ngIf="
+                    cadastroUsuarioForm.controls.Telefone.touched &&
+                    cadastroUsuarioForm.controls.Telefone.invalid
+                  ">
+                  Informe um telefone brasileiro válido com DDD.
+                </ion-text>
+
+              </div>
+
+
+              <!-- CPF -->
+              <div class="field-group">
+
+                <ion-input label="CPF" labelPlacement="stacked" fill="outline" class="input-custom" type="text"
+                  inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" formControlName="CPF"></ion-input>
+
+                <ion-text color="danger" class="field-error" *ngIf="
+                    cadastroUsuarioForm.controls.CPF.touched &&
+                    cadastroUsuarioForm.controls.CPF.invalid
+                  ">
+                  Informe um CPF válido.
+                </ion-text>
+
+              </div>
+
+
+              <!-- SENHA -->
+              <div class="field-group">
+
+                <ion-input label="Senha" labelPlacement="stacked" fill="outline" class="input-custom" type="password"
+                  autocomplete="new-password" placeholder="Mínimo de 6 caracteres" formControlName="Senha"></ion-input>
+
+                <ion-text color="danger" class="field-error" *ngIf="
+                    cadastroUsuarioForm.controls.Senha.touched &&
+                    cadastroUsuarioForm.controls.Senha.invalid
+                  ">
+                  A senha deve ter entre 6 e 45 caracteres.
+                </ion-text>
+
+              </div>
+
+
+              <!-- TIPO DE USUÁRIO -->
+              <div class="field-group">
+
+                <ion-select label="Tipo de usuário" labelPlacement="stacked" fill="outline"
+                  class="input-custom user-type-select" interface="popover" interfaceOptions="{}"
+                  placeholder="Selecione seu perfil" formControlName="TipoUsuario">
+                  <ion-select-option value="Cliente">
+                    Cliente
+                  </ion-select-option>
+
+                  <ion-select-option value="Prestador">
+                    Prestador de serviço
+                  </ion-select-option>
+                </ion-select>
+
+                <ion-text color="danger" class="field-error" *ngIf="
+                    cadastroUsuarioForm.controls.TipoUsuario.touched &&
+                    cadastroUsuarioForm.controls.TipoUsuario.invalid
+                  ">
+                  Selecione um tipo de usuário.
+                </ion-text>
+
+              </div>
+
+            </div>
+
+
+            <div class="form-switch">
+
+              <span>JÁ POSSUI UMA CONTA?</span>
+
+              <button type="button" class="toggle-form" (click)="trocarFormulario()">
+                FAZER LOGIN
+                <span class="toggle-arrow">↗</span>
+              </button>
+
+            </div>
+
+
+            <div class="form-actions">
+
+              <ion-button type="submit" expand="block" class="primary-button">
+                <span>CRIAR MINHA CONTA</span>
+                <span class="button-arrow">→</span>
+              </ion-button>
+
+              <p class="form-legal">
+                SEUS DADOS SERÃO UTILIZADOS NO SEU CADASTRO.
+              </p>
+
+            </div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
 </ion-content>

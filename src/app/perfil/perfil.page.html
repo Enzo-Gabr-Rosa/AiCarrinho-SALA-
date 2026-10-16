@@ -1,60 +1,322 @@
-<ion-header [translucent]="true">
+<ion-header class="profile-header">
   <ion-toolbar>
-    <ion-title id="titulo-perfil">PERFIL - {{ usuario?.Nome || 'USUÁRIO' }}</ion-title>
+    <div class="toolbar-content">
+      <button
+        class="brand"
+        type="button"
+        aria-label="SALA - Página de perfil"
+        (click)="goToConfig()">
+
+        <span class="brand-icon">AC</span>
+
+        <span class="brand-text">
+          <span class="brand-name">AiCarrinho</span>
+          <span class="brand-subtitle">ÁREA DO USUÁRIO</span>
+        </span>
+      </button>
+
+      <span class="toolbar-label">Meu perfil</span>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="img">
-    <img [src]="fotoPerfil" alt="Foto do Usuário" (error)="imagemErro($event)">
-    <p><strong>{{ usuario?.Nome ?? 'N/A' }}</strong></p>
-  </div>
-  <div id="classificacao">{{ tipoUsuario || 'USUÁRIO' }}</div>
+<ion-content [fullscreen]="true" class="profile-page">
 
-  <div class="perfil-container">
-    <div class="infos">
-      <div class="dados">
-        <p><strong>ID:</strong> {{ usuario?.id ?? 'N/A' }}</p>
-        <p><strong>CPF:</strong> {{ usuario?.CPF ?? 'N/A' }}</p>
-        <p><strong>EMAIL:</strong> {{ usuario?.Email ?? 'N/A' }}</p>
-        <p><strong>TELEFONE:</strong> {{ usuario?.Telefone ?? 'N/A' }}</p>
+  <main class="profile-container">
+
+    <!-- Introdução -->
+    <section class="page-intro">
+      <span class="section-eyebrow">
+        <span class="eyebrow-line"></span>
+        SUA CONTA AiCarrinho
+      </span>
+
+      <h1>Meu <span>perfil</span></h1>
+
+      <p>
+        Gerencie suas informações pessoais e acesse os recursos da sua conta.
+      </p>
+    </section>
+
+    <!-- Cartão principal -->
+    <section class="profile-card">
+
+      <div class="profile-card-decoration" aria-hidden="true">
+        <span class="decoration-circle circle-one"></span>
+        <span class="decoration-circle circle-two"></span>
       </div>
-    </div>
-    <div>
-      <ion-button class="botoes-perfil" id="editar" (click)="setOpen(true)">EDITAR INFORMAÇÕES</ion-button>
-      <ion-button class="botoes-perfil" id="agendamentos" (click)="goToAgendamentos()">AGENDAMENTOS</ion-button>
-      <ion-button class="botoes-perfil" id="logout" (click)="logout()">LOGOUT</ion-button>
-      <ion-button class="botoes-perfil" id="configuracoes" (click)="goToConfig()">CONFIGURAÇÕES</ion-button>
-    </div>
-  </div>
 
-  <ion-modal [isOpen]="estaAberto">
-    <ng-template>
-      <div class="modal-content">
-        <ion-toolbar class=>
-          <ion-buttons slot="start">
-            <ion-button (click)="setOpen(false)">Cancelar</ion-button>
-          </ion-buttons>
-          <ion-title>Editar...</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="editarPerfil()" [strong]="true">Salvar</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
+      <div class="profile-main">
+        <div class="profile-photo-wrapper">
+          <img
+            class="profile-photo"
+            [src]="fotoPerfil"
+            alt="Foto do usuário"
+            (error)="imagemErro($event)">
 
-        <!-- Formulário de edição de perfil -->
-
-        <div class="ion-padding">
-          <ion-input placeholder="Nome" [(ngModel)]="usuarioEdicao.Nome"></ion-input>
-          <ion-input placeholder="Email" [(ngModel)]="usuarioEdicao.Email"></ion-input>
-          <ion-input placeholder="Telefone" [(ngModel)]="usuarioEdicao.Telefone"></ion-input>
+          <span class="profile-photo-status" aria-hidden="true"></span>
         </div>
 
-        <ion-button color="danger" class="botao-excluir" (click)="excluirPerfil()" [disabled]="excluindoPerfil" position="bottom">Excluir
-          Perfil</ion-button>
+        <div class="profile-identity">
+          <span class="profile-overline">BEM-VINDO(A)</span>
+
+          <h2>{{ usuario?.Nome || 'Usuário' }}</h2>
+
+          <span class="profile-role">
+            <span class="role-dot"></span>
+            {{ tipoUsuario || 'USUÁRIO' }}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          class="edit-profile-button"
+          (click)="setOpen(true)">
+          <span class="edit-icon" aria-hidden="true">✎</span>
+          <span>Editar perfil</span>
+        </button>
+      </div>
+
+      <div class="profile-card-footer">
+        <div class="account-reference">
+          <span class="reference-label">IDENTIFICAÇÃO DA CONTA</span>
+          <span class="reference-value">
+            #{{ usuario?.id ?? 'N/A' }}
+          </span>
+        </div>
+
+        <span class="account-type">
+          <span class="account-type-dot"></span>
+          Conta {{ tipoUsuario || 'Usuário' }}
+        </span>
+      </div>
+
+    </section>
+
+    <!-- Informações -->
+    <section class="information-section">
+      <div class="section-heading">
+        <div>
+          <span class="section-eyebrow">DADOS CADASTRAIS</span>
+          <h2>Informações pessoais</h2>
+        </div>
+
+        <span class="section-symbol" aria-hidden="true">01</span>
+      </div>
+
+      <div class="information-grid">
+
+        <article class="information-item">
+          <span class="information-icon" aria-hidden="true">#</span>
+
+          <div class="information-content">
+            <span class="information-label">ID DO USUÁRIO</span>
+            <p>{{ usuario?.id ?? 'N/A' }}</p>
+          </div>
+        </article>
+
+        <article class="information-item">
+          <span class="information-icon" aria-hidden="true">@</span>
+
+          <div class="information-content">
+            <span class="information-label">E-MAIL</span>
+            <p>{{ usuario?.Email || 'Não informado' }}</p>
+          </div>
+        </article>
+
+        <article class="information-item">
+          <span class="information-icon" aria-hidden="true">CPF</span>
+
+          <div class="information-content">
+            <span class="information-label">CPF</span>
+            <p>{{ usuario?.CPF || 'Não informado' }}</p>
+          </div>
+        </article>
+
+        <article class="information-item">
+          <span class="information-icon" aria-hidden="true">☎</span>
+
+          <div class="information-content">
+            <span class="information-label">TELEFONE</span>
+            <p>{{ usuario?.Telefone || 'Não informado' }}</p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Ações -->
+    <section class="actions-section">
+      <div class="section-heading">
+        <div>
+          <span class="section-eyebrow">ACESSO RÁPIDO</span>
+          <h2>Gerenciar conta</h2>
+        </div>
+
+        <span class="section-symbol" aria-hidden="true">02</span>
+      </div>
+
+      <div class="actions-grid">
+
+        <button
+          type="button"
+          class="action-card action-primary"
+          (click)="goToAgendamentos()">
+
+          <span class="action-icon" aria-hidden="true">◷</span>
+
+          <span class="action-content">
+            <strong>Meus agendamentos</strong>
+            <small>Acompanhe seus serviços</small>
+          </span>
+
+          <span class="action-arrow" aria-hidden="true">→</span>
+        </button>
+
+        <button
+          type="button"
+          class="action-card"
+          (click)="goToConfig()">
+
+          <span class="action-icon" aria-hidden="true">⚙</span>
+
+          <span class="action-content">
+            <strong>Configurações</strong>
+            <small>Preferências da conta</small>
+          </span>
+
+          <span class="action-arrow" aria-hidden="true">→</span>
+        </button>
+
+        <button
+          type="button"
+          class="action-card action-logout"
+          (click)="logout()">
+
+          <span class="action-icon" aria-hidden="true">↪</span>
+
+          <span class="action-content">
+            <strong>Sair da conta</strong>
+            <small>Encerrar sua sessão</small>
+          </span>
+
+          <span class="action-arrow" aria-hidden="true">→</span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="profile-footer">
+      <span class="footer-brand">AiCarrinho</span>
+      <span>Agendamento de Lavagem Automotiva</span>
+    </footer>
+
+  </main>
+
+  <!-- Modal de edição -->
+  <ion-modal
+    class="profile-modal"
+    [isOpen]="estaAberto"
+    (didDismiss)="setOpen(false)">
+
+    <ng-template>
+      <div class="modal-content">
+
+        <header class="modal-header">
+          <div class="modal-heading">
+            <span class="section-eyebrow">DADOS DA CONTA</span>
+            <h2>Editar perfil</h2>
+            <p>Atualize as informações da sua conta AiCarrinho.</p>
+          </div>
+
+          <button
+            type="button"
+            class="modal-close"
+            aria-label="Fechar edição"
+            (click)="setOpen(false)">
+            ×
+          </button>
+        </header>
+
+        <div class="modal-divider"></div>
+
+        <div class="modal-form">
+
+          <div class="form-field">
+            <label for="perfil-nome">Nome completo</label>
+
+            <ion-input
+              id="perfil-nome"
+              class="profile-input"
+              placeholder="Digite seu nome"
+              fill="outline"
+              [(ngModel)]="usuarioEdicao.Nome">
+            </ion-input>
+          </div>
+
+          <div class="form-field">
+            <label for="perfil-email">E-mail</label>
+
+            <ion-input
+              id="perfil-email"
+              class="profile-input"
+              type="email"
+              placeholder="Digite seu e-mail"
+              fill="outline"
+              [(ngModel)]="usuarioEdicao.Email">
+            </ion-input>
+          </div>
+
+          <div class="form-field">
+            <label for="perfil-telefone">Telefone</label>
+
+            <ion-input
+              id="perfil-telefone"
+              class="profile-input"
+              type="tel"
+              placeholder="Digite seu telefone"
+              fill="outline"
+              [(ngModel)]="usuarioEdicao.Telefone">
+            </ion-input>
+          </div>
+
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="modal-button modal-cancel"
+            (click)="setOpen(false)">
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            class="modal-button modal-save"
+            (click)="editarPerfil()">
+            Salvar alterações
+          </button>
+        </div>
+
+        <div class="delete-section">
+          <div class="delete-information">
+            <strong>Excluir minha conta</strong>
+            <span>Essa ação não pode ser desfeita.</span>
+          </div>
+
+          <button
+            type="button"
+            class="delete-button"
+            [disabled]="excluindoPerfil"
+            (click)="excluirPerfil()">
+
+            {{ excluindoPerfil ? 'Excluindo...' : 'Excluir conta' }}
+          </button>
+        </div>
+
       </div>
     </ng-template>
   </ion-modal>
-
-
 
 </ion-content>
