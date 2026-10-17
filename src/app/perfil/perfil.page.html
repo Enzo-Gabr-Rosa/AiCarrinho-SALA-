@@ -1,11 +1,7 @@
 <ion-header class="profile-header">
   <ion-toolbar>
     <div class="toolbar-content">
-      <button
-        class="brand"
-        type="button"
-        aria-label="SALA - Página de perfil"
-        (click)="goToConfig()">
+      <button class="brand" type="button" aria-label="SALA - Página de perfil" (click)="goToConfig()">
 
         <span class="brand-icon">AC</span>
 
@@ -48,11 +44,7 @@
 
       <div class="profile-main">
         <div class="profile-photo-wrapper">
-          <img
-            class="profile-photo"
-            [src]="fotoPerfil"
-            alt="Foto do usuário"
-            (error)="imagemErro($event)">
+          <img class="profile-photo" [src]="fotoPerfil" alt="Foto do usuário" (error)="imagemErro($event)">
 
           <span class="profile-photo-status" aria-hidden="true"></span>
         </div>
@@ -68,10 +60,7 @@
           </span>
         </div>
 
-        <button
-          type="button"
-          class="edit-profile-button"
-          (click)="setOpen(true)">
+        <button type="button" class="edit-profile-button" (click)="setOpen(true)">
           <span class="edit-icon" aria-hidden="true">✎</span>
           <span>Editar perfil</span>
         </button>
@@ -158,10 +147,7 @@
 
       <div class="actions-grid">
 
-        <button
-          type="button"
-          class="action-card action-primary"
-          (click)="goToAgendamentos()">
+        <button type="button" class="action-card action-primary" (click)="goToAgendamentos()">
 
           <span class="action-icon" aria-hidden="true">◷</span>
 
@@ -173,10 +159,7 @@
           <span class="action-arrow" aria-hidden="true">→</span>
         </button>
 
-        <button
-          type="button"
-          class="action-card"
-          (click)="goToConfig()">
+        <button type="button" class="action-card" (click)="goToConfig()">
 
           <span class="action-icon" aria-hidden="true">⚙</span>
 
@@ -188,10 +171,7 @@
           <span class="action-arrow" aria-hidden="true">→</span>
         </button>
 
-        <button
-          type="button"
-          class="action-card action-logout"
-          (click)="logout()">
+        <button type="button" class="action-card action-logout" (click)="logout()">
 
           <span class="action-icon" aria-hidden="true">↪</span>
 
@@ -215,10 +195,7 @@
   </main>
 
   <!-- Modal de edição -->
-  <ion-modal
-    class="profile-modal"
-    [isOpen]="estaAberto"
-    (didDismiss)="setOpen(false)">
+  <ion-modal class="profile-modal" [isOpen]="estaAberto" (didDismiss)="setOpen(false)">
 
     <ng-template>
       <div class="modal-content">
@@ -230,71 +207,86 @@
             <p>Atualize as informações da sua conta AiCarrinho.</p>
           </div>
 
-          <button
-            type="button"
-            class="modal-close"
-            aria-label="Fechar edição"
-            (click)="setOpen(false)">
+          <button type="button" class="modal-close" aria-label="Fechar edição" (click)="setOpen(false)">
             ×
           </button>
         </header>
 
         <div class="modal-divider"></div>
 
-        <div class="modal-form">
-
-          <div class="form-field">
+        <div class="modal-form" [class.form-invalid]="erroAnimacao">
+          <!-- Nome -->
+          <div class="form-field" [class.field-invalid]="errosValidacao.Nome">
             <label for="perfil-nome">Nome completo</label>
 
-            <ion-input
-              id="perfil-nome"
-              class="profile-input"
-              placeholder="Digite seu nome"
-              fill="outline"
-              [(ngModel)]="usuarioEdicao.Nome">
-            </ion-input>
+            <ion-input id="perfil-nome" class="profile-input" placeholder="Digite seu nome completo" fill="outline"
+              [(ngModel)]="usuarioEdicao.Nome" [class.input-invalid]="errosValidacao.Nome"
+              (ionInput)="validarCampo('Nome')" (ionBlur)="validarCampo('Nome')"
+              [attr.aria-invalid]="!!errosValidacao.Nome" aria-describedby="erro-nome"></ion-input>
+
+            @if (errosValidacao.Nome) {
+            <span id="erro-nome" class="validation-message">
+              {{ errosValidacao.Nome }}
+            </span>
+            }
           </div>
 
-          <div class="form-field">
+          <!-- E-mail -->
+          <div class="form-field" [class.field-invalid]="errosValidacao.Email">
             <label for="perfil-email">E-mail</label>
 
-            <ion-input
-              id="perfil-email"
-              class="profile-input"
-              type="email"
-              placeholder="Digite seu e-mail"
-              fill="outline"
-              [(ngModel)]="usuarioEdicao.Email">
-            </ion-input>
+            <ion-input id="perfil-email" class="profile-input" type="email" placeholder="exemplo@email.com"
+              fill="outline" [(ngModel)]="usuarioEdicao.Email" [class.input-invalid]="errosValidacao.Email"
+              (ionInput)="validarCampo('Email')" (ionBlur)="validarCampo('Email')"
+              [attr.aria-invalid]="!!errosValidacao.Email" aria-describedby="erro-email"></ion-input>
+
+            @if (errosValidacao.Email) {
+            <span id="erro-email" class="validation-message">
+              {{ errosValidacao.Email }}
+            </span>
+            }
           </div>
 
-          <div class="form-field">
+          <!-- Telefone -->
+          <div class="form-field" [class.field-invalid]="errosValidacao.Telefone">
             <label for="perfil-telefone">Telefone</label>
 
-            <ion-input
-              id="perfil-telefone"
-              class="profile-input"
-              type="tel"
-              placeholder="Digite seu telefone"
-              fill="outline"
-              [(ngModel)]="usuarioEdicao.Telefone">
-            </ion-input>
+            <ion-input id="perfil-telefone" class="profile-input" type="tel" inputmode="numeric"
+              placeholder="(18) 99999-9999" fill="outline" [(ngModel)]="usuarioEdicao.Telefone"
+              [class.input-invalid]="errosValidacao.Telefone" (ionInput)="validarCampo('Telefone')"
+              (ionBlur)="validarCampo('Telefone')" [attr.aria-invalid]="!!errosValidacao.Telefone"
+              aria-describedby="erro-telefone"></ion-input>
+
+            @if (errosValidacao.Telefone) {
+            <span id="erro-telefone" class="validation-message">
+              {{ errosValidacao.Telefone }}
+            </span>
+            }
+
+            <span class="field-hint">
+              Informe o DDD e o número do telefone.
+            </span>
           </div>
 
+          <!-- CPF: consulta, sem alteração -->
+          <div class="form-field cpf-readonly">
+            <label for="perfil-cpf">CPF</label>
+
+            <ion-input id="perfil-cpf" class="profile-input" fill="outline" [value]="usuarioEdicao.CPF || ''"
+              readonly></ion-input>
+
+            <span class="field-hint">
+              O CPF não pode ser alterado nesta tela.
+            </span>
+          </div>
         </div>
 
         <div class="modal-actions">
-          <button
-            type="button"
-            class="modal-button modal-cancel"
-            (click)="setOpen(false)">
+          <button type="button" class="modal-button modal-cancel" (click)="setOpen(false)">
             Cancelar
           </button>
 
-          <button
-            type="button"
-            class="modal-button modal-save"
-            (click)="editarPerfil()">
+          <button type="button" class="modal-button modal-save" (click)="editarPerfil()">
             Salvar alterações
           </button>
         </div>
@@ -305,11 +297,7 @@
             <span>Essa ação não pode ser desfeita.</span>
           </div>
 
-          <button
-            type="button"
-            class="delete-button"
-            [disabled]="excluindoPerfil"
-            (click)="excluirPerfil()">
+          <button type="button" class="delete-button" [disabled]="excluindoPerfil" (click)="excluirPerfil()">
 
             {{ excluindoPerfil ? 'Excluindo...' : 'Excluir conta' }}
           </button>

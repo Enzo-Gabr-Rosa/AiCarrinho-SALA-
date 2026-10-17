@@ -1,74 +1,278 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Agendamentos</ion-title>
+<ion-header [translucent]="true" class="agendamentos-header">
+  <ion-toolbar class="agendamentos-toolbar">
+    <div class="header-content">
+      <div class="brand">
+        <span class="brand-mark">AC</span>
+
+        <div class="brand-info">
+          <span class="brand-name">AiCarrinho</span>
+          <span class="brand-caption">GESTÃO DE SERVIÇOS</span>
+        </div>
+      </div>
+
+      <span class="header-label">Agendamentos</span>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding agendamentos-page">
-  @if (!agendamentos.length) {
-    <section class="empty-state">
-      <h2>Nenhum agendamento encontrado</h2>
-      <p>Quando houver uma solicitação, ela aparecerá aqui.</p>
-      <ion-button expand="block" (click)="voltarParaHome()">Voltar para início</ion-button>
+<ion-content [fullscreen]="true" class="ion-padding agendamentos-page" [scrollY]="true">
+  <main class="agendamentos-container">
+
+    <!-- Introdução -->
+    <section class="page-intro">
+      <div class="intro-content">
+        <span class="section-eyebrow">PAINEL DE CONTROLE</span>
+
+        <h1>Agendamentos<span>.</span></h1>
+
+        <p>
+          Acompanhe seus horários, consulte os detalhes dos serviços
+          e gerencie seus agendamentos.
+        </p>
+      </div>
+
+      <div class="intro-decoration" aria-hidden="true">
+        <span class="decoration-line"></span>
+        <span class="decoration-square"></span>
+        <span class="decoration-dot"></span>
+      </div>
     </section>
-  } @else {
-    <section class="lista-agendamentos">
-      @for (agendamento of agendamentos; track agendamento.id) {
+
+    <!-- Resumo -->
+    <section class="summary-grid" aria-label="Resumo dos agendamentos">
+      <article class="summary-card">
+        <span class="summary-label">Total listado</span>
+        <strong class="summary-value">{{ agendamentos.length }}</strong>
+        <span class="summary-description">Agendamentos encontrados</span>
+      </article>
+
+      <article class="summary-card summary-card-highlight">
+        <span class="summary-label">Acompanhamento</span>
+        <strong class="summary-value">AC</strong>
+        <span class="summary-description">Gestão de horários</span>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-label">Organização</span>
+        <strong class="summary-value">24/7</strong>
+        <span class="summary-description">Consulte seus registros</span>
+      </article>
+    </section>
+
+    <!-- Cabeçalho da lista -->
+    <section class="list-section">
+      <div class="list-heading">
+        <div>
+          <span class="section-eyebrow">VISÃO GERAL</span>
+          <h2>Seus horários</h2>
+        </div>
+
+        <span class="total-badge">
+          {{ agendamentos.length }}
+          {{ agendamentos.length === 1 ? 'registro' : 'registros' }}
+        </span>
+      </div>
+
+      <!-- Estado vazio -->
+      @if (!agendamentos.length) {
+      <section class="empty-state">
+        <div class="empty-illustration" aria-hidden="true">
+          <span class="empty-calendar">
+            <span class="calendar-top"></span>
+            <span class="calendar-grid">
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
+            </span>
+          </span>
+          <span class="empty-orbit"></span>
+        </div>
+
+        <span class="section-eyebrow">NENHUM REGISTRO</span>
+
+        <h3>Nenhum agendamento encontrado</h3>
+
+        <p>
+          Quando houver uma solicitação, ela aparecerá aqui.
+          Você poderá consultar os horários e acompanhar o status.
+        </p>
+
+        <ion-button class="primary-button" expand="block" (click)="voltarParaHome()">
+          Voltar para início
+        </ion-button>
+      </section>
+      } @else {
+      <!-- Lista -->
+      <div class="lista-agendamentos">
+        @for (agendamento of agendamentos; track agendamento.id) {
         <article class="agendamento-card">
-          <header>
-            <div>
-              <h3>
-                {{ getServicoDoPrestador(agendamento.idPrestador, agendamento.idServico)?.nome || 'Serviço' }}
-              </h3>
-              <p class="prestador-nome">
-                Prestador: {{ getPrestadorPorId(agendamento.idPrestador)?.Nome || 'Não informado' }}
-              </p>
+
+          <div class="card-top-line"></div>
+
+          <header class="card-header">
+            <div class="service-heading">
+              <span class="service-indicator" aria-hidden="true"></span>
+
+              <div class="service-title-group">
+                <span class="card-overline">SERVIÇO AGENDADO</span>
+
+                <h3>
+                  {{
+                  getServicoDoPrestador(
+                  agendamento.idPrestador,
+                  agendamento.idServico
+                  )?.nome || 'Serviço'
+                  }}
+                </h3>
+              </div>
             </div>
-            <span class="status status-{{ agendamento.status.toLowerCase() }}">{{ agendamento.status }}</span>
+
+            <span class="status" [ngClass]="'status-' + agendamento.status.toLowerCase()">
+              <span class="status-dot"></span>
+              {{ agendamento.status }}
+            </span>
           </header>
 
+          <div class="prestador-info">
+            <span class="detail-symbol" aria-hidden="true">P</span>
+
+            <div>
+              <span class="detail-label">PRESTADOR</span>
+              <p>
+                {{
+                getPrestadorPorId(agendamento.idPrestador)?.Nome
+                || 'Não informado'
+                }}
+              </p>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
           <div class="detalhes">
-            <p><strong>Início:</strong> {{ formatDate(agendamento.horarioInicio) }}</p>
-            <p><strong>Fim:</strong> {{ formatDate(agendamento.horarioFim) }}</p>
+            <div class="date-detail">
+              <span class="detail-symbol" aria-hidden="true">I</span>
+
+              <div>
+                <span class="detail-label">INÍCIO</span>
+                <p>{{ formatDate(agendamento.horarioInicio) }}</p>
+              </div>
+            </div>
+
+            <div class="date-detail">
+              <span class="detail-symbol detail-symbol-end" aria-hidden="true">F</span>
+
+              <div>
+                <span class="detail-label">TÉRMINO</span>
+                <p>{{ formatDate(agendamento.horarioFim) }}</p>
+              </div>
+            </div>
           </div>
 
           @if (agendamento.status !== 'Cancelado') {
-            <ion-button color="danger" fill="outline" expand="block" (click)="cancelarAgendamento(agendamento.id)">
+          <div class="card-actions">
+            <ion-button class="cancel-button" fill="outline" expand="block"
+              (click)="cancelarAgendamento(agendamento.id)">
               Cancelar agendamento
             </ion-button>
+          </div>
+          } @else {
+          <div class="cancelled-notice">
+            Este agendamento foi cancelado.
+          </div>
           }
         </article>
+        }
+      </div>
       }
     </section>
-  }
-  @if (tipoUsuario === 'Prestador') {
-    <ion-button expand="block" (click)="setOpen(true)">Cadastrar serviço</ion-button>
-  }
-  @if (tipoUsuario === 'Prestador') {
-    <ion-modal [isOpen]="estaAberto">
-    <ng-template>
-      <div class="modal-content">
-        <ion-toolbar>
-          <ion-buttons slot="start">
-            <ion-button (click)="setOpen(false)">Cancelar</ion-button>
-          </ion-buttons>
-          <ion-title>Novo serviço</ion-title>
-        </ion-toolbar>
-        <form [formGroup]="servicoForm" (ngSubmit)="cadastrarServico()" class="servico-form">
-          <ion-input label="Nome do serviço" labelPlacement="stacked" formControlName="nome"></ion-input>
-          <ion-input label="Descrição" labelPlacement="stacked" formControlName="descricao"></ion-input>
-          <ion-input label="Início" labelPlacement="stacked" type="datetime-local" formControlName="horarioInicio"></ion-input>
-          <ion-input label="Fim" labelPlacement="stacked" type="datetime-local" formControlName="horarioFim"></ion-input>
 
-          <ion-button type="submit" expand="block">Cadastrar serviço</ion-button>
-        </form>
+    <!-- Ação exclusiva para prestadores -->
+    @if (tipoUsuario === 'Prestador') {
+    <section class="provider-section">
+      <div class="provider-copy">
+        <span class="section-eyebrow">ÁREA DO PRESTADOR</span>
+        <h2>Disponibilize um serviço</h2>
+        <p>
+          Cadastre um serviço e informe os horários disponíveis
+          para seus clientes.
+        </p>
       </div>
-    </ng-template>
-    </ion-modal>
-  }
 
-  <div class="footer-actions">
-    <ion-button expand="block" (click)="voltarParaHome()">Voltar para início</ion-button>
-    <ion-button expand="block" fill="outline" (click)="voltarParaPerfil()">Perfil</ion-button>
-  </div>
+      <ion-button class="primary-button provider-button" expand="block" (click)="setOpen(true)">
+        <span class="button-plus" aria-hidden="true">+</span>
+        Cadastrar serviço
+      </ion-button>
+    </section>
+    }
+
+    <!-- Modal de cadastro -->
+    @if (tipoUsuario === 'Prestador') {
+    <ion-modal class="service-modal" [isOpen]="estaAberto" (didDismiss)="setOpen(false)">
+      <ng-template>
+        <div class="modal-content">
+
+          <ion-toolbar class="modal-toolbar">
+            <ion-buttons slot="start">
+              <ion-button class="modal-cancel" (click)="setOpen(false)">
+                Cancelar
+              </ion-button>
+            </ion-buttons>
+
+            <ion-title>Novo serviço</ion-title>
+          </ion-toolbar>
+
+          <div class="modal-intro">
+            <span class="section-eyebrow">CADASTRO</span>
+            <h2>Adicionar serviço<span>.</span></h2>
+            <p>
+              Preencha os dados abaixo para disponibilizar um novo horário.
+            </p>
+          </div>
+
+          <form [formGroup]="servicoForm" (ngSubmit)="cadastrarServico()" class="servico-form">
+            <div class="form-field">
+              <ion-input label="Nome do serviço" labelPlacement="stacked" placeholder="Ex.: Lavagem completa"
+                formControlName="nome" maxlength="100" required></ion-input>
+            </div>
+
+            <div class="form-field">
+              <ion-input label="Descrição" labelPlacement="stacked" placeholder="Descreva o serviço oferecido"
+                formControlName="descricao" maxlength="500"></ion-input>
+            </div>
+
+            <div class="form-field">
+              <ion-input label="Data e horário de início" labelPlacement="stacked" type="datetime-local"
+                formControlName="horarioInicio" required></ion-input>
+            </div>
+
+            <div class="form-field">
+              <ion-input label="Data e horário de término" labelPlacement="stacked" type="datetime-local"
+                formControlName="horarioFim" required></ion-input>
+            </div>
+
+            <div class="form-note">
+              Confira os horários antes de cadastrar. O término deve ser
+              posterior ao início e não pode se sobrepor a outro serviço.
+            </div>
+
+            <ion-button class="primary-button submit-button" type="submit" expand="block">
+              Cadastrar serviço
+            </ion-button>
+          </form>
+        </div>
+      </ng-template>
+    </ion-modal>
+    }
+
+    <!-- Rodapé informativo: sem botões redundantes com a navbar -->
+    <footer class="page-footer">
+      <span class="footer-mark">AC</span>
+      <span>AiCarrinho</span>
+      <span class="footer-separator"></span>
+      <span class="footer-caption">GESTÃO DE AGENDAMENTOS</span>
+    </footer>
+
+  </main>
 </ion-content>

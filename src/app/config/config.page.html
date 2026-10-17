@@ -1,45 +1,166 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Configurações
-    </ion-title>
-      <ion-button class="voltar" (click)="voltarParaPerfil()">
-        <ion-icon name="close-outline" class="icone-branco"></ion-icon>
+<ion-header [translucent]="true" class="settings-header">
+  <ion-toolbar class="settings-toolbar">
+    <div class="header-content">
+      <div class="header-brand">
+        <span class="brand-mark">AC</span>
+
+        <div class="brand-info">
+          <span class="brand-name">AiCarrinho</span>
+          <span class="brand-caption">PREFERÊNCIAS DO SISTEMA</span>
+        </div>
+      </div>
+
+      <ion-button
+        class="close-button"
+        fill="clear"
+        aria-label="Voltar para o perfil"
+        (click)="voltarParaPerfil()"
+      >
+        <ion-icon name="close-outline"></ion-icon>
       </ion-button>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding settings-page">
-  <section class="settings-card">
-    <h2>Preferências</h2>
+<ion-content
+  [fullscreen]="true"
+  class="ion-padding settings-page"
+>
+  <main class="settings-container">
 
-    <div class="setting-row">
-      <div>
-        <h3>Notificações</h3>
-        <p>Receber avisos sobre agendamentos e atualizações.</p>
+    <!-- Introdução -->
+    <section class="page-intro">
+      <span class="section-eyebrow">SUA CONTA</span>
+
+      <h1>Configurações</h1>
+
+      <p>
+        Personalize sua experiência no AiCarrinho.
+        Ajuste suas preferências conforme necessário.
+      </p>
+    </section>
+
+    <!-- Preferências -->
+    <section class="settings-card">
+      <div class="card-heading">
+        <div class="heading-icon">
+          <ion-icon name="options-outline"></ion-icon>
+        </div>
+
+        <div>
+          <h2>Preferências</h2>
+          <p>Gerencie sua experiência de uso.</p>
+        </div>
       </div>
-      <ion-toggle
-      [checked]="notificacoesAtivas"
-      (ionChange)="toggleNotificacoes($event)">
-      </ion-toggle>
-    </div>
 
-    <div class="setting-row">
-      <div>
-        <h3>Modo escuro</h3>
-        <p>Melhor contraste para uso em ambientes com pouca luz.</p>
+      <div class="settings-divider"></div>
+
+      <!-- Notificações -->
+      <div class="setting-row">
+        <div class="setting-icon notification-icon">
+          <ion-icon name="notifications-outline"></ion-icon>
+        </div>
+
+        <div class="setting-info">
+          <h3>Notificações</h3>
+
+          <p>
+            Receba avisos sobre agendamentos e atualizações.
+          </p>
+
+          <span
+            class="setting-status"
+            [class.status-active]="notificacoesAtivas"
+          >
+            {{ notificacoesAtivas ? 'Ativadas' : 'Desativadas' }}
+          </span>
+        </div>
+
+        <ion-toggle
+          class="settings-toggle"
+          [checked]="notificacoesAtivas"
+          (ionChange)="toggleNotificacoes($event)"
+          aria-label="Ativar ou desativar notificações"
+        ></ion-toggle>
       </div>
-      <ion-toggle
-        [checked]="modoEscuro"
-        (ionChange)="toggleModoEscuro($event)">
-      </ion-toggle>
-    </div>
-  </section>
 
-  <div class="actions">
+      <div class="settings-divider"></div>
 
-    <ion-button expand="block" color="danger" fill="outline" (click)="logout()">
-      Sair da conta
-    </ion-button>
-  </div>
+      <!-- Modo escuro -->
+      <div class="setting-row">
+        <div class="setting-icon theme-icon">
+          <ion-icon name="moon-outline"></ion-icon>
+        </div>
+
+        <div class="setting-info">
+          <h3>Modo escuro</h3>
+
+          <p>
+            Ajuste a aparência para ambientes com pouca iluminação.
+          </p>
+
+          <span
+            class="setting-status"
+            [class.status-active]="modoEscuro"
+          >
+            {{ modoEscuro ? 'Ativado' : 'Desativado' }}
+          </span>
+        </div>
+
+        <ion-toggle
+          class="settings-toggle"
+          [checked]="modoEscuro"
+          (ionChange)="toggleModoEscuro($event)"
+          aria-label="Ativar ou desativar modo escuro"
+        ></ion-toggle>
+      </div>
+    </section>
+
+    <!-- Sessão da conta -->
+    <section class="account-section">
+      <div class="account-heading">
+        <span class="section-eyebrow">CONTA</span>
+        <h2>Sessão</h2>
+      </div>
+
+      <div class="logout-card">
+        <div class="logout-info">
+          <div class="logout-icon">
+            <ion-icon name="log-out-outline"></ion-icon>
+          </div>
+
+          <div>
+            <h3>Sair da conta</h3>
+            <p>Encerre sua sessão neste dispositivo.</p>
+          </div>
+        </div>
+
+        <ion-button
+          class="logout-button"
+          fill="outline"
+          expand="block"
+          (click)="logout()"
+        >
+          <ion-icon
+            slot="start"
+            name="log-out-outline"
+          ></ion-icon>
+
+          Sair da conta
+        </ion-button>
+      </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="settings-footer">
+      <span class="footer-mark">AC</span>
+
+      <p>AiCarrinho</p>
+
+      <span class="footer-caption">
+        CONFIGURAÇÕES DA CONTA
+      </span>
+    </footer>
+
+  </main>
 </ion-content>

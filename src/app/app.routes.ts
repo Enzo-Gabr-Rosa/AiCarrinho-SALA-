@@ -43,4 +43,12 @@ export const routes: Routes = [
     canActivate: [authGuard, tipoGuard],
     data: { tipo: 'Prestador' },
   },
+  {
+    path: 'administracao',
+    loadComponent: () => import('./administracao/administracao.page').then( m => m.AdministracaoPage)
+  },
+  {
+    path: 'suporte',
+    loadComponent: () => import('./suporte/suporte.page').then( m => m.SuportePage)
+  },
 ];

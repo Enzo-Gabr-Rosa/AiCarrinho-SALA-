@@ -1,62 +1,299 @@
 /*
  * App Global CSS
  * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
+ * Estilos globais do AiCarrinho.
  */
 
-/* Core CSS required for Ionic components to work properly */
+/* =========================================================
+   CORE CSS DO IONIC
+   ========================================================= */
+
 @import "@ionic/angular/css/core.css";
 
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Optional CSS utils that can be commented out */
+/* =========================================================
+   UTILITÁRIOS DO IONIC
+   ========================================================= */
+
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+/* =========================================================
+   TEMA GLOBAL — AI CARRINHO
+   ========================================================= */
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* ---------------------------------------------------------
+   TEMA CLARO
+   --------------------------------------------------------- */
+
+:root,
+.light-theme {
+  color-scheme: light;
+
+  /* Cores principais */
+  --Onyx: #f7f7f7;
+  --Carbon-Black-Strong: #ffffff;
+  --Carbon-Black-Mid: #eeeeee;
+  --Carbon-Black-Low: #e2e2e2;
+
+  /* Cores de destaque */
+  --Violet-Twillight: #4f4bb6;
+  --Wisteria-Blue: #86a5d9;
+  --Strong-Cyan: #26bcbc;
+  --Bright-Snow: #181818;
+
+  /* Texto */
+  --Text-Primary: #181818;
+  --Text-Secondary: #454545;
+  --Text-Muted: #777777;
+
+  /* Bordas e superfícies */
+  --Border-Color: #dedede;
+  --Card-Background: #ffffff;
+  --Input-Background: #ffffff;
+
+  /* Cores padrão do Ionic */
+  --ion-background-color: #f7f7f7;
+  --ion-background-color-rgb: 247, 247, 247;
+
+  --ion-text-color: #181818;
+  --ion-text-color-rgb: 24, 24, 24;
+
+  --ion-toolbar-background: #ffffff;
+  --ion-toolbar-color: #181818;
+
+  --ion-item-background: #ffffff;
+  --ion-card-background: #ffffff;
+
+  --ion-color-primary: #4f4bb6;
+  --ion-color-primary-rgb: 79, 75, 182;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #45429f;
+  --ion-color-primary-tint: #615ebc;
+
+  --ion-color-secondary: #26bcbc;
+  --ion-color-secondary-rgb: 38, 188, 188;
+  --ion-color-secondary-contrast: #101010;
+  --ion-color-secondary-contrast-rgb: 16, 16, 16;
+  --ion-color-secondary-shade: #21a5a5;
+  --ion-color-secondary-tint: #3cc3c3;
+
+  --ion-border-color: #dedede;
+  --ion-color-step-50: #f0f0f0;
+  --ion-color-step-100: #e6e6e6;
+  --ion-color-step-150: #dcdcdc;
+  --ion-color-step-200: #d2d2d2;
+  --ion-color-step-250: #c8c8c8;
+  --ion-color-step-300: #bebebe;
+  --ion-color-step-350: #b4b4b4;
+  --ion-color-step-400: #aaaaaa;
+  --ion-color-step-450: #a0a0a0;
+  --ion-color-step-500: #969696;
+  --ion-color-step-550: #8c8c8c;
+  --ion-color-step-600: #828282;
+  --ion-color-step-650: #787878;
+  --ion-color-step-700: #6e6e6e;
+  --ion-color-step-750: #646464;
+  --ion-color-step-800: #5a5a5a;
+  --ion-color-step-850: #505050;
+  --ion-color-step-900: #464646;
+  --ion-color-step-950: #3c3c3c;
+}
+
+/* ---------------------------------------------------------
+   TEMA ESCURO
+   --------------------------------------------------------- */
+
+.dark-theme {
+  color-scheme: dark;
+
+  /* Cores principais */
+  --Onyx: #101010;
+  --Carbon-Black-Strong: #181818;
+  --Carbon-Black-Mid: #1d1d1d;
+  --Carbon-Black-Low: #242424;
+
+  /* Cores de destaque */
+  --Violet-Twillight: #4f4bb6;
+  --Wisteria-Blue: #86a5d9;
+  --Strong-Cyan: #26dcdc;
+  --Bright-Snow: #f7f7f7;
+
+  /* Texto */
+  --Text-Primary: #f7f7f7;
+  --Text-Secondary: #d0d0d0;
+  --Text-Muted: #858592;
+
+  /* Bordas e superfícies */
+  --Border-Color: #303030;
+  --Card-Background: #181818;
+  --Input-Background: #1d1d1d;
+
+  /* Cores padrão do Ionic */
+  --ion-background-color: #101010;
+  --ion-background-color-rgb: 16, 16, 16;
+
+  --ion-text-color: #f7f7f7;
+  --ion-text-color-rgb: 247, 247, 247;
+
+  --ion-toolbar-background: #181818;
+  --ion-toolbar-color: #f7f7f7;
+
+  --ion-item-background: #181818;
+  --ion-card-background: #181818;
+
+  --ion-color-primary: #86a5d9;
+  --ion-color-primary-rgb: 134, 165, 217;
+  --ion-color-primary-contrast: #101010;
+  --ion-color-primary-contrast-rgb: 16, 16, 16;
+  --ion-color-primary-shade: #7691bf;
+  --ion-color-primary-tint: #92aedf;
+
+  --ion-color-secondary: #26dcdc;
+  --ion-color-secondary-rgb: 38, 220, 220;
+  --ion-color-secondary-contrast: #101010;
+  --ion-color-secondary-contrast-rgb: 16, 16, 16;
+  --ion-color-secondary-shade: #21c2c2;
+  --ion-color-secondary-tint: #3cdddd;
+
+  --ion-border-color: #303030;
+  --ion-color-step-50: #1a1a1a;
+  --ion-color-step-100: #242424;
+  --ion-color-step-150: #2e2e2e;
+  --ion-color-step-200: #383838;
+  --ion-color-step-250: #424242;
+  --ion-color-step-300: #4c4c4c;
+  --ion-color-step-350: #565656;
+  --ion-color-step-400: #606060;
+  --ion-color-step-450: #6a6a6a;
+  --ion-color-step-500: #747474;
+  --ion-color-step-550: #7e7e7e;
+  --ion-color-step-600: #888888;
+  --ion-color-step-650: #929292;
+  --ion-color-step-700: #9c9c9c;
+  --ion-color-step-750: #a6a6a6;
+  --ion-color-step-800: #b0b0b0;
+  --ion-color-step-850: #bababa;
+  --ion-color-step-900: #c4c4c4;
+  --ion-color-step-950: #cecece;
+}
 
 /* =========================================================
-   POPOVER DO SELECT — TEMA ESCURO
+   TRANSIÇÃO ENTRE OS TEMAS
+   ========================================================= */
+
+body,
+ion-content,
+ion-toolbar,
+ion-header,
+ion-footer,
+ion-card,
+ion-item,
+ion-list,
+ion-input,
+ion-textarea,
+ion-select,
+ion-button {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* =========================================================
+   ESTILOS GLOBAIS DE SUPERFÍCIES
+   ========================================================= */
+
+body {
+  background: var(--ion-background-color);
+  color: var(--ion-text-color);
+}
+
+ion-content {
+  --background: var(--ion-background-color);
+  --color: var(--ion-text-color);
+}
+
+ion-header {
+  background: var(--ion-toolbar-background);
+  color: var(--ion-toolbar-color);
+}
+
+ion-toolbar {
+  --background: var(--ion-toolbar-background);
+  --color: var(--ion-toolbar-color);
+}
+
+ion-card {
+  --background: var(--Card-Background);
+  --color: var(--Text-Primary);
+}
+
+ion-item {
+  --background: var(--ion-item-background);
+  --color: var(--Text-Primary);
+  --border-color: var(--Border-Color);
+}
+
+ion-input,
+ion-textarea,
+ion-select {
+  --color: var(--Text-Primary);
+  --placeholder-color: var(--Text-Muted);
+  --highlight-color-focused: var(--Violet-Twillight);
+}
+
+/* =========================================================
+   POPOVER DO SELECT
    ========================================================= */
 
 ion-popover.select-popover {
-  --background: #121019;
-  --color: #f4f0ff;
   --width: 260px;
   --max-width: calc(100vw - 32px);
+  --backdrop-opacity: 0.25;
+
+  --box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(167, 139, 250, 0.15);
+}
+
+/* Tema escuro do select */
+
+.dark-theme ion-popover.select-popover,
+ion-popover.select-popover.dark-popover {
+  --background: #121019;
+  --color: #f4f0ff;
 
   --box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(167, 139, 250, 0.15);
-
-  --backdrop-opacity: 0.25;
 }
+
+/* Tema claro do select */
+
+.light-theme ion-popover.select-popover,
+ion-popover.select-popover.light-popover {
+  --background: #ffffff;
+  --color: #181818;
+
+  --box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(79, 75, 182, 0.12);
+}
+
+/* Estrutura do popover */
 
 ion-popover.select-popover::part(content) {
   overflow: hidden;
-
-  border: 1px solid rgba(167, 139, 250, 0.2);
+  border: 1px solid var(--Border-Color);
   border-radius: 14px;
 }
 
@@ -65,22 +302,18 @@ ion-popover.select-popover::part(content) {
 ion-popover.select-popover ion-list {
   margin: 0;
   padding: 6px;
-
-  background: #121019;
+  background: var(--ion-background-color);
 }
 
 /* Cada opção */
 
 ion-popover.select-popover ion-item {
   --background: transparent;
-  --color: #d8d1e8;
   --border-color: transparent;
   --min-height: 48px;
 
   margin: 3px 0;
-
   border-radius: 9px;
-
   font-size: 13px;
 
   transition: background 0.2s ease;
@@ -90,7 +323,7 @@ ion-popover.select-popover ion-item {
 
 ion-popover.select-popover ion-item.item-radio-checked {
   --background: rgba(124, 77, 255, 0.18);
-  --color: #c4b5fd;
+  --color: #a78bfa;
 
   font-weight: 600;
 }
@@ -108,4 +341,25 @@ ion-popover.select-popover ion-radio {
   --color-checked: #a78bfa;
 
   margin-inline-end: 8px;
+}
+
+/* =========================================================
+   ACESSIBILIDADE — MOVIMENTO REDUZIDO
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  ion-content,
+  ion-toolbar,
+  ion-header,
+  ion-footer,
+  ion-card,
+  ion-item,
+  ion-list,
+  ion-input,
+  ion-textarea,
+  ion-select,
+  ion-button {
+    transition: none;
+  }
 }
