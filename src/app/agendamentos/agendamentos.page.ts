@@ -40,7 +40,8 @@ export class AgendamentosPage {
     horarioFim: ['', Validators.required],
   });
 
-  constructor() {
+  constructor() {//Para Prestador funcionalidade de aceitar pedidos de agendamentos do cliente e excluir o serviço
+    //Para Cliente Implementar pedir
     this.usuario = this.autenticacaoService.obterUsuarioAtual();
     if (!this.usuario) {
       this.router.navigate(['/login']);

@@ -126,7 +126,7 @@ export class PerfilPage implements OnInit {
     }
   }
 
-  protected async editarPerfil(): Promise<void> {
+  protected async editarPerfil(): Promise<void> { //Arrumar o bug do email
     if (!this.usuario) {
       this.setOpen(false);
       return;
@@ -148,12 +148,10 @@ export class PerfilPage implements OnInit {
     const nome = String(this.usuarioEdicao.Nome ?? '').trim();
     const email = String(this.usuarioEdicao.Email ?? '').trim();
     const telefone = String(this.usuarioEdicao.Telefone ?? '').trim();
-    const cpf = String(this.usuarioEdicao.CPF ?? '').replace(/\D/g, '');
 
     this.usuario.Nome = nome;
     this.usuario.Email = email;
     this.usuario.Telefone = telefone;
-    this.usuario.CPF = cpf;
 
     this.usuarioEdicao = { ...this.usuario };
     this.errosValidacao = {

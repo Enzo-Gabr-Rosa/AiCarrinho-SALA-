@@ -25,6 +25,10 @@ export class clienteService {
   }
 
   public async adicionar(usuario: Usuario): Promise<Cliente | null> {
+    let emailParaEnviar;
+    if(usuario.Email === ""){
+      emailParaEnviar = null;
+    }else{emailParaEnviar = usuario.Email}
     const cliente = new Cliente(
       await this.novoId(),
       usuario.CPF,
@@ -43,7 +47,7 @@ export class clienteService {
         CPF: cliente.CPF,
         Nome: cliente.Nome,
         Telefone: cliente.Telefone,
-        Email: cliente.Email,
+        Email: emailParaEnviar,
         Senha: cliente.Senha,
       }));
       return new Cliente(criado.id, criado.CPF, criado.Nome, criado.Telefone, criado.Email, criado.Senha);
