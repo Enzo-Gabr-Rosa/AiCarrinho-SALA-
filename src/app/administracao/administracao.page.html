@@ -1,13 +1,232 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>administracao</ion-title>
+<ion-header [translucent]="true" class="admin-header">
+  <ion-toolbar class="admin-toolbar">
+    <div class="header-content">
+      <div class="brand">
+        <span class="brand-mark">AC</span>
+
+        <div class="brand-info">
+          <span class="brand-name">AiCarrinho</span>
+          <span class="brand-caption">PAINEL ADMINISTRATIVO</span>
+        </div>
+      </div>
+
+      <span class="header-label">Administração</span>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">administracao</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="admin-page">
+  <main class="admin-container">
+
+    <section class="page-intro">
+      <span class="section-eyebrow">GERENCIAMENTO DO SISTEMA</span>
+
+      <h1>Usuários<span>.</span></h1>
+
+      <p>
+        Consulte os usuários cadastrados e altere suas informações.
+      </p>
+    </section>
+
+    <section class="summary-grid">
+      <article class="summary-card">
+        <span class="summary-label">Total de usuários</span>
+        <strong class="summary-value">{{ usuarios.length }}</strong>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-label">Clientes</span>
+        <strong class="summary-value">
+          {{ quantidadePorTipo('Cliente') }}
+        </strong>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-label">Prestadores</span>
+        <strong class="summary-value">
+          {{ quantidadePorTipo('Prestador') }}
+        </strong>
+      </article>
+    </section>
+
+    <section class="search-panel">
+      <label for="pesquisa-usuarios">Pesquisar usuário</label>
+
+      <input
+        id="pesquisa-usuarios"
+        type="search"
+        placeholder="Nome, CPF ou e-mail..."
+        [(ngModel)]="termoBusca"
+        (ngModelChange)="pesquisar()"
+      />
+
+      <div class="filter-buttons">
+        <button
+          type="button"
+          [class.active]="filtro === 'Todos'"
+          (click)="alterarFiltro('Todos')"
+        >
+          Todos
+        </button>
+
+        <button
+          type="button"
+          [class.active]="filtro === 'Cliente'"
+          (click)="alterarFiltro('Cliente')"
+        >
+          Clientes
+        </button>
+
+        <button
+          type="button"
+          [class.active]="filtro === 'Prestador'"
+          (click)="alterarFiltro('Prestador')"
+        >
+          Prestadores
+        </button>
+      </div>
+    </section>
+
+    @if (carregando) {
+      <section class="loading-state">
+        <span class="loading-spinner"></span>
+        <p>Carregando usuários...</p>
+      </section>
+    } @else if (erroCarregamento) {
+      <section class="empty-state">
+        <h2>Não foi possível carregar os usuários</h2>
+        <p>Verifique a conexão com o servidor e tente novamente.</p>
+
+        <button type="button" class="primary-button" (click)="ionViewWillEnter()">
+          Tentar novamente
+        </button>
+      </section>
+    } @else {
+
+      <section class="list-section">
+        <div class="list-heading">
+          <h2>Usuários cadastrados</h2>
+
+          <span class="total-badge">
+            {{ usuariosFiltrados().length }}
+          </span>
+        </div>
+
+        @if (pesquisando) {
+          <div class="search-loading">
+            <span class="loading-spinner"></span>
+            <span>Pesquisando...</span>
+          </div>
+        } @else if (usuariosFiltrados().length === 0) {
+          <section class="empty-state">
+            <span class="empty-symbol">?</span>
+
+            <h2>Nenhum usuário encontrado</h2>
+
+            <p>
+              Não encontramos usuários com os critérios informados.
+              Tente outro nome, CPF ou e-mail.
+            </p>
+          </section>
+        } @else {
+          <div class="user-list">
+            @for (usuario of usuariosFiltrados(); track usuario.tipo + usuario.id) {
+              <article class="user-row">
+                <div class="user-info">
+                  <div class="user-avatar">
+                    {{ usuario.Nome.charAt(0).toUpperCase() }}
+                  </div>
+
+                  <div class="user-details">
+                    <h3>{{ usuario.Nome }}</h3>
+
+                    <span class="user-type" [class.provider-type]="usuario.tipo === 'Prestador'">
+                      {{ usuario.tipo }}
+                    </span>
+
+                    <p>{{ usuario.Email || 'E-mail não informado' }}</p>
+                    <p>CPF: {{ usuario.CPF }}</p>
+                    <p>Telefone: {{ usuario.Telefone }}</p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  class="edit-button"
+                  (click)="editarUsuario(usuario)"
+                >
+                  Editar
+                </button>
+              </article>
+            }
+          </div>
+        }
+      </section>
+    }
+
+    @if (usuarioEmEdicao) {
+      <section class="edit-form">
+        <div class="list-heading">
+          <div>
+            <span class="section-eyebrow">EDITAR {{ usuarioEmEdicao.tipo.toUpperCase() }}</span>
+            <h2>Informações do usuário</h2>
+          </div>
+        </div>
+
+        <label for="nome">Nome</label>
+        <input
+          id="nome"
+          type="text"
+          [(ngModel)]="usuarioEmEdicao.Nome"
+        />
+
+        <label for="cpf">CPF</label>
+        <input
+          id="cpf"
+          type="text"
+          [(ngModel)]="usuarioEmEdicao.CPF"
+        />
+
+        <label for="telefone">Telefone</label>
+        <input
+          id="telefone"
+          type="text"
+          [(ngModel)]="usuarioEmEdicao.Telefone"
+        />
+
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="usuarioEmEdicao.Email"
+        />
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="cancelarEdicao()"
+            [disabled]="salvando"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            class="primary-button"
+            (click)="salvarAlteracoes()"
+            [disabled]="salvando"
+          >
+            {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
+          </button>
+        </div>
+      </section>
+    }
+
+    <footer class="page-footer">
+      <span class="footer-brand">AiCarrinho</span>
+      <span>Gerenciamento de usuários</span>
+    </footer>
+
+  </main>
 </ion-content>

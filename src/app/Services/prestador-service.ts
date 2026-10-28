@@ -58,6 +58,20 @@ export class prestadorService {
     }
   }
 
+  public async alterarDados(
+    id: number,
+    dados: Partial<Pick<Prestador, 'Nome' | 'CPF' | 'Telefone' | 'Senha' | 'Descricao'>> & { Email?: string | null }
+  ): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.patch(`${this.api}/${id}`, dados));
+      return true;
+    } catch (erro) {
+      console.error('Erro ao alterar dados do prestador:', erro);
+      return false;
+    }
+  }
+
+
   public async excluir(prestador: Prestador): Promise<boolean> {
     try {
       await firstValueFrom(this.http.delete(`${this.api}/${prestador.id}`));
@@ -92,10 +106,10 @@ export class prestadorService {
     const prestadores = await this.obterPrestadores();
     return prestadores.find(prestador => cpf.strip(prestador.CPF) === cpfNormalizado);
   }
-    public async obterServicosDoPrestador(id: number): Promise<Servico[] | null> {
+  public async obterServicosDoPrestador(id: number): Promise<Servico[] | null> {
     const prestador = await this.obterPrestadorPorId(id);
-    if(!prestador)
-        return null;
+    if (!prestador)
+      return null;
     return prestador.Servicos ?? null;
   }
 
@@ -122,7 +136,7 @@ export class prestadorService {
     };
 
     if (this.verificarServicoExistente(prestador.Servicos, novoServico) ||
-        this.verificarHorarioSobreposto(prestador.Servicos, novoServico)) {
+      this.verificarHorarioSobreposto(prestador.Servicos, novoServico)) {
       return false;
     }
 
@@ -188,7 +202,7 @@ export class prestadorService {
     return prestadores.some(prestador => cpf.strip(prestador.CPF) === cpfNormalizado);
   }
 
-  public async validarHorarioSobreposto(idPrestador: number,horarioInicio: Date,horarioFim: Date): Promise<boolean> {
+  public async validarHorarioSobreposto(idPrestador: number, horarioInicio: Date, horarioFim: Date): Promise<boolean> {
     const prestador = await this.obterPrestadorPorId(idPrestador);
     if (!prestador) {
       return false;
@@ -215,7 +229,7 @@ export class prestadorService {
       novoFim > new Date(servico.horarioInicio).getTime()
     );
   }
-  
+
 
   //________________________________________________________
   //Complementares
@@ -234,11 +248,11 @@ export class prestadorService {
 
   private async novoId(): Promise<number> {
     const prestadores = await this.obterPrestadores();
-    const ids:number[] = [];
+    const ids: number[] = [];
     prestadores.forEach(prestador => {
       ids.push(prestador.id);
     });
-    if(ids.length === 0){
+    if (ids.length === 0) {
       return -1;
     }
     return Math.max(...ids) + 1;

@@ -233,7 +233,7 @@
 
           <!-- E-mail -->
           <div class="form-field" [class.field-invalid]="errosValidacao.Email">
-            <label for="perfil-email">E-mail</label>
+            <label for="perfil-email">E-mail (opcional)</label>
 
             <ion-input id="perfil-email" class="profile-input" type="email" placeholder="exemplo@email.com"
               fill="outline" [(ngModel)]="usuarioEdicao.Email" [class.input-invalid]="errosValidacao.Email"
@@ -273,7 +273,7 @@
             <label for="perfil-cpf">CPF</label>
 
             <ion-input id="perfil-cpf" class="profile-input" fill="outline" [value]="usuarioEdicao.CPF || ''"
-              readonly></ion-input>
+              disabled aria-label="CPF não editável"></ion-input>
 
             <span class="field-hint">
               O CPF não pode ser alterado nesta tela.

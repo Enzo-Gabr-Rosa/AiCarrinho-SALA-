@@ -50,7 +50,7 @@ export class ConfigPage {
 
   protected modoEscuro = this.obterPreferencia(
     'modoEscuro',
-    false
+    true
   );
 
   constructor() {
@@ -134,4 +134,9 @@ export class ConfigPage {
   ): void {
     localStorage.setItem(chave, String(valor));
   }
+
+  administracao(){
+    this.router.navigate(['/administracao']);
+  }
+
 }

@@ -1,14 +1,9 @@
 :host {
-  --Onyx: #101010;
-  --Carbon-Black-Strong: #181818;
-  --Carbon-Black-Mid: #1d1d1d;
-  --Carbon-Black-Low: #242424;
-  --Violet-Twillight: #4f4bb6;
-  --Wisteria-Blue: #86a5d9;
-  --Strong-Cyan: #26dcdc;
-  --Bright-Snow: #f7f7f7;
-  --Muted-Text: #9999a8;
-  --Card-Border: rgba(255, 255, 255, 0.07);
+  --Onyx: var(--ion-background-color, #101010);
+  --Carbon-Black-Strong: var(--Card-Background, #181818);
+  --Bright-Snow: var(--Text-Primary, #f7f7f7);
+  --Muted-Text: var(--Text-Muted, #858592);
+  --Card-Border: var(--Border-Color, #303030);
 }
 
 @font-face {
@@ -1222,4 +1217,211 @@ ion-content {
   .form-field .validation-message {
     animation: none;
   }
+}
+
+/* =========================================================
+   AJUSTES DE TEMA E CONTRASTE
+   Evita textos brancos em superfícies claras e força as cores
+   dos componentes Ionic que podem ignorar a cor herdada.
+   ========================================================= */
+
+.profile-page {
+  --background: var(--ion-background-color);
+  --color: var(--Text-Primary);
+  color: var(--Text-Primary);
+}
+
+.profile-header ion-toolbar {
+  --background: var(--ion-toolbar-background);
+  --color: var(--ion-toolbar-color);
+  --border-color: var(--Border-Color);
+}
+
+.brand, .brand-text, .brand-name, .toolbar-label, .page-intro h1,
+.section-heading h2, .information-content p, .profile-identity h2,
+.account-type, .reference-value, .action-content strong,
+.modal-heading h2, .form-field label {
+  color: var(--Text-Primary);
+}
+
+.page-intro > p, .information-label, .reference-label, .profile-overline,
+.brand-subtitle, .profile-footer, .action-content small, .modal-heading p,
+.field-hint, .delete-information span {
+  color: var(--Text-Secondary);
+}
+
+.profile-card, .information-item, .action-card {
+  color: var(--Text-Primary);
+  border-color: var(--Border-Color);
+}
+
+.profile-modal {
+  --background: var(--Card-Background);
+  color: var(--Text-Primary);
+}
+
+.profile-modal::part(content) {
+  background: var(--Card-Background);
+  border-color: var(--Border-Color);
+}
+
+.profile-input {
+  --background: var(--Input-Background);
+  --color: var(--Text-Primary);
+  --placeholder-color: var(--Text-Muted);
+  --placeholder-opacity: 1;
+}
+
+.profile-input::part(container) {
+  background: var(--Input-Background);
+  border-color: var(--Border-Color);
+}
+
+.profile-input::part(native) {
+  color: var(--Text-Primary);
+  caret-color: var(--Violet-Twillight);
+}
+
+.modal-content {
+  background: var(--Card-Background);
+  color: var(--Text-Primary);
+}
+
+.modal-close, .modal-cancel {
+  background: var(--Carbon-Black-Mid);
+  color: var(--Text-Primary);
+  border-color: var(--Border-Color);
+}
+
+.modal-divider, .delete-section { border-color: var(--Border-Color); }
+
+/* Tema claro: o tema padrão do global.scss usa :root, portanto
+   estes ajustes valem sempre que body não tiver .dark-theme. */
+:host-context(body:not(.dark-theme)) .profile-header ion-toolbar {
+  --background: #ffffff;
+  --color: #181818;
+  --border-color: #dedede;
+}
+
+:host-context(body:not(.dark-theme)) .profile-card {
+  background: radial-gradient(circle at 100% 0, rgba(79, 75, 182, 0.07), transparent 38%), #ffffff;
+  border-color: #dedede;
+  box-shadow: 0 12px 35px rgba(25, 25, 40, 0.07);
+}
+
+:host-context(body:not(.dark-theme)) .information-item,
+:host-context(body:not(.dark-theme)) .action-card {
+  background: #ffffff;
+  color: #181818;
+  border-color: #dedede;
+  box-shadow: 0 5px 18px rgba(25, 25, 40, 0.035);
+}
+
+:host-context(body:not(.dark-theme)) .action-card:hover { background: #f5f4ff; }
+
+:host-context(body:not(.dark-theme)) .action-primary {
+  background: linear-gradient(100deg, rgba(79, 75, 182, 0.08), #ffffff);
+}
+
+:host-context(body:not(.dark-theme)) .action-content strong,
+:host-context(body:not(.dark-theme)) .profile-identity h2,
+:host-context(body:not(.dark-theme)) .page-intro h1,
+:host-context(body:not(.dark-theme)) .section-heading h2,
+:host-context(body:not(.dark-theme)) .information-content p,
+:host-context(body:not(.dark-theme)) .modal-heading h2,
+:host-context(body:not(.dark-theme)) .form-field label,
+:host-context(body:not(.dark-theme)) .toolbar-label,
+:host-context(body:not(.dark-theme)) .brand-name,
+:host-context(body:not(.dark-theme)) .reference-value,
+:host-context(body:not(.dark-theme)) .account-type {
+  color: #181818;
+}
+
+:host-context(body:not(.dark-theme)) .page-intro > p,
+:host-context(body:not(.dark-theme)) .information-label,
+:host-context(body:not(.dark-theme)) .reference-label,
+:host-context(body:not(.dark-theme)) .profile-overline,
+:host-context(body:not(.dark-theme)) .brand-subtitle,
+:host-context(body:not(.dark-theme)) .profile-footer,
+:host-context(body:not(.dark-theme)) .action-content small,
+:host-context(body:not(.dark-theme)) .modal-heading p,
+:host-context(body:not(.dark-theme)) .field-hint,
+:host-context(body:not(.dark-theme)) .delete-information span {
+  color: #555566;
+}
+
+:host-context(body:not(.dark-theme)) .modal-content {
+  background: radial-gradient(circle at 100% 0, rgba(79, 75, 182, 0.06), transparent 35%), #ffffff;
+  color: #181818;
+}
+
+:host-context(body:not(.dark-theme)) .profile-modal { --background: #ffffff; }
+
+:host-context(body:not(.dark-theme)) .profile-input {
+  --background: #ffffff;
+  --color: #181818;
+  --placeholder-color: #777777;
+}
+
+:host-context(body:not(.dark-theme)) .profile-input::part(container) {
+  background: #ffffff;
+  border-color: #d5d5e0;
+}
+
+:host-context(body:not(.dark-theme)) .profile-input::part(native) { color: #181818; }
+
+:host-context(body:not(.dark-theme)) .modal-close,
+:host-context(body:not(.dark-theme)) .modal-cancel {
+  background: #f0f0f5;
+  color: #242434;
+  border-color: #dedee8;
+}
+
+:host-context(body:not(.dark-theme)) .modal-divider,
+:host-context(body:not(.dark-theme)) .delete-section { border-color: #e2e2ea; }
+
+/* Tema escuro */
+:host-context(body.dark-theme) .profile-header ion-toolbar {
+  --background: #181818;
+  --color: #f7f7f7;
+  --border-color: #303030;
+}
+
+:host-context(body.dark-theme) .profile-card,
+:host-context(body.dark-theme) .information-item,
+:host-context(body.dark-theme) .action-card {
+  background-color: #181818;
+  color: #f7f7f7;
+  border-color: #303030;
+}
+
+:host-context(body.dark-theme) .profile-card {
+  background: radial-gradient(circle at 100% 0, rgba(79, 75, 182, 0.12), transparent 38%), #181818;
+}
+
+:host-context(body.dark-theme) .profile-modal,
+:host-context(body.dark-theme) .modal-content {
+  --background: #181818;
+  background-color: #181818;
+  color: #f7f7f7;
+}
+
+:host-context(body.dark-theme) .profile-input {
+  --background: #1d1d1d;
+  --color: #f7f7f7;
+  --placeholder-color: #858592;
+}
+
+:host-context(body.dark-theme) .profile-input::part(container) {
+  background: #1d1d1d;
+  border-color: #303030;
+}
+
+:host-context(body.dark-theme) .profile-input::part(native) { color: #f7f7f7; }
+
+:host-context(body.dark-theme) .modal-close,
+:host-context(body.dark-theme) .modal-cancel {
+  background: #24242c;
+  color: #f7f7f7;
+  border-color: #303030;
 }

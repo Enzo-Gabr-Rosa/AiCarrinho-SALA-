@@ -126,7 +126,7 @@ export class PerfilPage implements OnInit {
     }
   }
 
-  protected async editarPerfil(): Promise<void> { //Arrumar o bug do email
+  protected async editarPerfil(): Promise<void> {
     if (!this.usuario) {
       this.setOpen(false);
       return;
@@ -266,13 +266,13 @@ export class PerfilPage implements OnInit {
 
       case 'Email': {
         const email = String(this.usuarioEdicao.Email ?? '').trim();
-        const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
 
+        // O e-mail é opcional; valide o formato somente se foi preenchido.
         if (!email) {
-          this.errosValidacao.Email = 'O e-mail é obrigatório.';
+          this.errosValidacao.Email = '';
         } else if (email.length > 254) {
           this.errosValidacao.Email = 'O e-mail é muito longo.';
-        } else if (!emailValido) {
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
           this.errosValidacao.Email =
             'Informe um endereço de e-mail válido.';
         } else {
@@ -360,7 +360,6 @@ export class PerfilPage implements OnInit {
     this.validarCampo('Nome');
     this.validarCampo('Email');
     this.validarCampo('Telefone');
-    this.validarCampo('CPF');
 
     return !Object.values(this.errosValidacao).some(
       mensagem => mensagem.length > 0

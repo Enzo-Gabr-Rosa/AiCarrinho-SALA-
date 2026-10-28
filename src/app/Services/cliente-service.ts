@@ -12,7 +12,7 @@ import { cpf } from 'cpf-cnpj-validator';
 export class clienteService {
   private http = inject(HttpClient);
   private api = `${environment.api}/clientes`;
-  
+
   //________________________________________________________
   //CRUD
   public async obterClientes(): Promise<Cliente[]> {
@@ -26,9 +26,9 @@ export class clienteService {
 
   public async adicionar(usuario: Usuario): Promise<Cliente | null> {
     let emailParaEnviar;
-    if(usuario.Email === ""){
+    if (usuario.Email === "") {
       emailParaEnviar = null;
-    }else{emailParaEnviar = usuario.Email}
+    } else { emailParaEnviar = usuario.Email }
     const cliente = new Cliente(
       await this.novoId(),
       usuario.CPF,
@@ -37,7 +37,7 @@ export class clienteService {
       usuario.Email,
       usuario.Senha
     );
-    
+
     try {
       if (await this.verificarCPF(usuario.CPF)) {
         return null;
@@ -53,6 +53,18 @@ export class clienteService {
       return new Cliente(criado.id, criado.CPF, criado.Nome, criado.Telefone, criado.Email, criado.Senha);
     } catch {
       return null;
+    }
+  }
+  public async alterarDados(
+    id: number,
+    dados: Partial<Pick<Cliente, 'Nome' | 'CPF' | 'Telefone' | 'Senha'>> & { Email?: string | null }
+  ): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.patch(`${this.api}/${id}`, dados));
+      return true;
+    } catch (erro) {
+      console.error('Erro ao alterar dados do cliente:', erro);
+      return false;
     }
   }
 
@@ -94,11 +106,11 @@ export class clienteService {
   //Complementares
   private async novoId(): Promise<number> {
     const clientes = await this.obterClientes();
-    const ids:number[] = [];
+    const ids: number[] = [];
     clientes.forEach(cliente => {
       ids.push(cliente.id);
     });
-    if(ids.length === 0){
+    if (ids.length === 0) {
       return -1;
     }
     return Math.max(...ids) + 1;
