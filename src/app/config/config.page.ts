@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -39,7 +39,7 @@ import {
     CommonModule
   ]
 })
-export class ConfigPage {
+export class ConfigPage implements OnInit{
   private router = inject(Router);
   private autenticacaoService = inject(autenticacaoService);
 
@@ -50,8 +50,13 @@ export class ConfigPage {
 
   protected modoEscuro = this.obterPreferencia(
     'modoEscuro',
-    true
+    false
   );
+
+  ngOnInit(): void {
+    // Aplica o tema salvo assim que a página é inicializada.
+    this.aplicarTema();
+  }
 
   constructor() {
     addIcons({
@@ -62,8 +67,6 @@ export class ConfigPage {
       logOutOutline
     });
 
-    // Aplica o tema salvo assim que a página é inicializada.
-    this.aplicarTema();
   }
 
   voltarParaPerfil(): void {
@@ -96,9 +99,12 @@ export class ConfigPage {
 
     // Aplica o tema imediatamente.
     this.aplicarTema();
+    console.log("Toggle modo escuro...");
   }
 
   private aplicarTema(): void {
+    console.log("Aplicando tema...");
+    
     const elementos = [
       document.documentElement,
       document.body
@@ -125,7 +131,7 @@ export class ConfigPage {
 
     return valor === null
       ? padrao
-      : valor === 'true';
+      : valor === 'false';
   }
 
   private salvarPreferencia(
@@ -133,6 +139,7 @@ export class ConfigPage {
     valor: boolean
   ): void {
     localStorage.setItem(chave, String(valor));
+    console.log("Salvando preferencia...");
   }
 
   administracao(){
