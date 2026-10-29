@@ -57,9 +57,10 @@ export class clienteService {
   }
   public async alterarDados(
     id: number,
-    dados: Partial<Pick<Cliente, 'Nome' | 'CPF' | 'Telefone' | 'Senha'>> & { Email?: string | null }
+    dados: Partial<Pick<Cliente, 'Nome' | 'CPF' | 'Telefone' | 'Senha'>> & { Email?: string | undefined }
   ): Promise<boolean> {
     try {
+      console.log("clienteService",dados)
       await firstValueFrom(this.http.patch(`${this.api}/${id}`, dados));
       return true;
     } catch (erro) {

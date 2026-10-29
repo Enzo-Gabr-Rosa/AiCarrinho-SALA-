@@ -95,11 +95,11 @@ export class ConfigPage implements OnInit{
     );
 
     // Salva a escolha para as próximas visitas.
-    this.salvarPreferencia('modoEscuro', this.modoEscuro);
-
+    
     // Aplica o tema imediatamente.
-    this.aplicarTema();
     console.log("Toggle modo escuro...");
+    this.aplicarTema();
+    this.salvarPreferencia('modoEscuro', this.modoEscuro);
   }
 
   private aplicarTema(): void {

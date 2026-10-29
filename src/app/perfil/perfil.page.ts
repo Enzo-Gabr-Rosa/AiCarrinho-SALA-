@@ -161,6 +161,28 @@ export class PerfilPage implements OnInit {
       CPF: ''
     };
 
+    switch (this.usuario.tipoUsuario) {
+      case "Cliente":
+        console.log("Cleinte edit");
+        
+        this.clienteService.alterarDados(
+          this.usuario.id,
+          {
+            Nome: this.usuario.Nome,
+            Telefone: this.usuario.Telefone,
+            Email: this.usuario.Email,
+            Senha: this.usuario.Senha,
+            CPF: this.usuario.CPF
+          }
+        )
+        break;
+    
+      default:
+        console.log("Nada edit");
+        console.log()
+        break;
+    }
+
     this.erroAnimacao = false;
     this.setOpen(false);
   }
