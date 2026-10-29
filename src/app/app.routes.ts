@@ -33,10 +33,14 @@ export const routes: Routes = [
   },
   {
     path: 'administracao',
-    loadComponent: () => import('./administracao/administracao.page').then( m => m.AdministracaoPage)
+    loadComponent: () => import('./administracao/administracao.page').then( m => m.AdministracaoPage),
+    canActivate: [authGuard],
+    data: { tipoUsuario: 'administrador' },
   },
   {
     path: 'suporte',
-    loadComponent: () => import('./suporte/suporte.page').then( m => m.SuportePage)
+    loadComponent: () => import('./suporte/suporte.page').then( m => m.SuportePage),
+    canActivate: [authGuard],
+    data: { tipoUsuario: 'administrador' },
   },
 ];
