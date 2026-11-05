@@ -58,6 +58,20 @@ export class administradorService {
       return null;
     }
   }
+    public async alterarDados(
+    id: number,
+    dados: Partial<Pick<Administrador, 'Nome' | 'CPF' | 'Telefone' | 'Senha'>> & {
+      Email?: string | null;
+    }
+  ): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.patch(`${this.api}/${id}`, dados));
+      return true;
+    } catch (erro) {
+      console.error('Erro ao alterar dados do administrador:', erro);
+      return false;
+    }
+  }
 
   public async excluir(administrador: Administrador): Promise<boolean> {
     try {

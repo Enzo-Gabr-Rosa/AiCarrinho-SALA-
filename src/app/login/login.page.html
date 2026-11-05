@@ -144,8 +144,21 @@
               <!-- SENHA -->
               <div class="field-group">
 
-                <ion-input label="Senha" labelPlacement="stacked" fill="outline" class="input-custom" type="password"
-                  autocomplete="current-password" placeholder="Digite sua senha" formControlName="Senha"></ion-input>
+                <div class="password-input-wrapper">
+                  <ion-input label="Senha" labelPlacement="stacked" fill="outline" class="input-custom"
+                    [type]="mostrarSenhaLogin ? 'text' : 'password'"
+                    autocomplete="current-password" placeholder="Digite sua senha"
+                    formControlName="Senha"></ion-input>
+
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    (click)="alternarVisibilidadeSenha('login')"
+                    [attr.aria-label]="mostrarSenhaLogin ? 'Ocultar senha' : 'Mostrar senha'"
+                    [attr.title]="mostrarSenhaLogin ? 'Ocultar senha' : 'Mostrar senha'">
+                    <ion-icon [name]="mostrarSenhaLogin ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+                  </button>
+                </div>
 
                 <ion-text color="danger" class="field-error" *ngIf="
                     loginForm.controls.Senha.touched &&
@@ -279,8 +292,21 @@
               <!-- SENHA -->
               <div class="field-group">
 
-                <ion-input label="Senha" labelPlacement="stacked" fill="outline" class="input-custom" type="password"
-                  autocomplete="new-password" placeholder="Mínimo de 6 caracteres" formControlName="Senha"></ion-input>
+                <div class="password-input-wrapper">
+                  <ion-input label="Senha" labelPlacement="stacked" fill="outline" class="input-custom"
+                    [type]="mostrarSenhaCadastro ? 'text' : 'password'"
+                    autocomplete="new-password" placeholder="Mínimo de 6 caracteres"
+                    formControlName="Senha"></ion-input>
+
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    (click)="alternarVisibilidadeSenha('cadastro')"
+                    [attr.aria-label]="mostrarSenhaCadastro ? 'Ocultar senha' : 'Mostrar senha'"
+                    [attr.title]="mostrarSenhaCadastro ? 'Ocultar senha' : 'Mostrar senha'">
+                    <ion-icon [name]="mostrarSenhaCadastro ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+                  </button>
+                </div>
 
                 <ion-text color="danger" class="field-error" *ngIf="
                     cadastroUsuarioForm.controls.Senha.touched &&

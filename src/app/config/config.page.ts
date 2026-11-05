@@ -97,14 +97,11 @@ export class ConfigPage implements OnInit{
     // Salva a escolha para as próximas visitas.
     
     // Aplica o tema imediatamente.
-    console.log("Toggle modo escuro...");
     this.aplicarTema();
     this.salvarPreferencia('modoEscuro', this.modoEscuro);
   }
 
   private aplicarTema(): void {
-    console.log("Aplicando tema...");
-    
     const elementos = [
       document.documentElement,
       document.body
@@ -131,7 +128,7 @@ export class ConfigPage implements OnInit{
 
     return valor === null
       ? padrao
-      : valor === 'false';
+      : valor === 'true';
   }
 
   private salvarPreferencia(
@@ -139,7 +136,6 @@ export class ConfigPage implements OnInit{
     valor: boolean
   ): void {
     localStorage.setItem(chave, String(valor));
-    console.log("Salvando preferencia...");
   }
 
   administracao(){

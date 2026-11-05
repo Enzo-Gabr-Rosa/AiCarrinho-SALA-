@@ -1,25 +1,34 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { animate, stagger } from 'animejs';
-
 import {
   IonHeader,
   IonToolbar,
   IonTitle,
-  IonContent
+  IonContent,
+  IonIcon
 } from '@ionic/angular/standalone';
 
 import { clienteService } from '../Services/cliente-service';
 import { prestadorService } from '../Services/prestador-service';
+import { administradorService } from '../Services/administador-service';
 
-interface UsuarioAdministracao {
+import { Cliente } from '../Modelos/cliente-modelo';
+import { Prestador } from '../Modelos/prestador-modelo';
+import { Administrador } from '../Modelos/administrador-modelo';
+import { Usuario } from '../Modelos/usuario-modelo';
+
+type TipoFiltro = 'Todos' | 'Cliente' | 'Prestador' | 'Administrador';
+
+interface UsuarioLista {
   id: number;
   Nome: string;
   CPF: string;
   Telefone: string;
   Email: string;
-  tipo: 'Cliente' | 'Prestador';
+  tipoUsuario: string;
+  Descricao?: string;
+  original: Usuario;
 }
 
 @Component({
@@ -33,214 +42,250 @@ interface UsuarioAdministracao {
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonContent
+    IonContent,
+    IonIcon
   ]
 })
 export class AdministracaoPage {
-  private clienteService = inject(clienteService);
-  private prestadorService = inject(prestadorService);
+  clientes: Cliente[] = [];
+  prestadores: Prestador[] = [];
+  administradores: Administrador[] = [];
 
-  protected usuarios: UsuarioAdministracao[] = [];
-  protected usuarioEmEdicao: UsuarioAdministracao | null = null;
+  termoPesquisa = '';
+  filtroTipo: TipoFiltro = 'Todos';
 
-  protected termoBusca = '';
-  protected filtro: 'Todos' | 'Cliente' | 'Prestador' = 'Todos';
+  mostrarCadastroAdministrador = false;
+  usuarioEditando: Usuario | null = null;
+  salvando = false;
 
-  protected carregando = true;
-  protected pesquisando = false;
-  protected salvando = false;
-  protected erroCarregamento = false;
+  mensagemErro = '';
+  mensagemSucesso = '';
 
-  async ionViewWillEnter(): Promise<void> {
-    await this.carregarUsuarios();
+  novoAdministrador = {
+    Nome: '',
+    CPF: '',
+    Telefone: '',
+    Email: '',
+    Senha: ''
+  };
 
-    requestAnimationFrame(() => {
-      this.animarEntrada();
-      this.animarLista();
-    });
+  dadosEdicao = {
+    Nome: '',
+    CPF: '',
+    Telefone: '',
+    Email: '',
+    Senha: '',
+    Descricao: ''
+  };
+
+  constructor(
+    private clienteService: clienteService,
+    private prestadorService: prestadorService,
+    private administradorService: administradorService
+  ) {}
+
+  ionViewWillEnter(): void {
+    this.carregarUsuarios();
   }
 
-  private async carregarUsuarios(): Promise<void> {
-    this.carregando = true;
-    this.erroCarregamento = false;
-
-    requestAnimationFrame(() => {
-      const carregamento = document.querySelector('.loading-spinner');
-
-      if (carregamento) {
-        animate(carregamento, {
-          rotate: '1turn',
-          duration: 900,
-          ease: 'linear',
-          loop: true
-        });
-      }
-    });
-
+  async carregarUsuarios(): Promise<void> {
     try {
-      const [clientes, prestadores] = await Promise.all([
-        this.clienteService.obterClientes(),
-        this.prestadorService.obterPrestadores()
-      ]);
-
-      this.usuarios = [
-        ...clientes.map(cliente => ({
-          id: cliente.id,
-          Nome: cliente.Nome,
-          CPF: cliente.CPF,
-          Telefone: cliente.Telefone,
-          Email: cliente.Email,
-          tipo: 'Cliente' as const
-        })),
-
-        ...prestadores.map(prestador => ({
-          id: prestador.id,
-          Nome: prestador.Nome,
-          CPF: prestador.CPF,
-          Telefone: prestador.Telefone,
-          Email: prestador.Email,
-          tipo: 'Prestador' as const
-        }))
-      ];
-
+      this.clientes = await this.clienteService.obterClientes();
+      this.prestadores = await this.prestadorService.obterPrestadores();
+      this.administradores = await this.administradorService.obterAdministradores();
     } catch (erro) {
       console.error('Erro ao carregar usuários:', erro);
-      this.erroCarregamento = true;
-    } finally {
-      this.carregando = false;
+      this.mensagemErro = 'Não foi possível carregar os usuários.';
     }
   }
 
-  protected usuariosFiltrados(): UsuarioAdministracao[] {
-    const termo = this.normalizar(this.termoBusca);
+  get usuariosFiltrados(): UsuarioLista[] {
+    const usuarios: Usuario[] = [
+      ...this.clientes,
+      ...this.prestadores,
+      ...this.administradores
+    ];
 
-    return this.usuarios.filter(usuario => {
+    const lista: UsuarioLista[] = usuarios.map(usuario => ({
+      id: usuario.id,
+      Nome: usuario.Nome,
+      CPF: usuario.CPF,
+      Telefone: usuario.Telefone,
+      Email: usuario.Email,
+      tipoUsuario: usuario.tipoUsuario,
+      Descricao: usuario instanceof Prestador ? usuario.Descricao : '',
+      original: usuario
+    }));
+
+    const termo = this.termoPesquisa.trim().toLocaleLowerCase();
+
+    return lista.filter(usuario => {
       const correspondeTipo =
-        this.filtro === 'Todos' || usuario.tipo === this.filtro;
+        this.filtroTipo === 'Todos' ||
+        usuario.tipoUsuario === this.filtroTipo;
 
-      const correspondePesquisa = this.normalizar(
-        `${usuario.Nome} ${usuario.CPF} ${usuario.Email}`
-      ).includes(termo);
+      const correspondePesquisa =
+        !termo ||
+        (usuario.Nome || '').toLocaleLowerCase().includes(termo) ||
+        (usuario.CPF || '').toLocaleLowerCase().includes(termo) ||
+        (usuario.Telefone || '').toLocaleLowerCase().includes(termo) ||
+        (usuario.Email || '').toLocaleLowerCase().includes(termo);
 
       return correspondeTipo && correspondePesquisa;
     });
   }
 
-  protected pesquisar(): void {
-    this.pesquisando = true;
+  alternarCadastroAdministrador(): void {
+    this.mostrarCadastroAdministrador = !this.mostrarCadastroAdministrador;
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
 
-    setTimeout(() => {
-      this.pesquisando = false;
-
-      requestAnimationFrame(() => {
-        this.animarLista();
-      });
-    }, 180);
+    if (this.mostrarCadastroAdministrador) {
+      this.cancelarEdicao();
+    } else {
+      this.limparNovoAdministrador();
+    }
   }
 
-  protected alterarFiltro(filtro: 'Todos' | 'Cliente' | 'Prestador'): void {
-    this.filtro = filtro;
-    this.pesquisar();
-  }
+  async cadastrarAdministrador(): Promise<void> {
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
 
-  protected editarUsuario(usuario: UsuarioAdministracao): void {
-    this.usuarioEmEdicao = { ...usuario };
-
-    requestAnimationFrame(() => {
-      const formulario = document.querySelector('.edit-form');
-
-      if (formulario) {
-        animate(formulario, {
-          opacity: [0, 1],
-          translateY: [12, 0],
-          duration: 350,
-          ease: 'outQuad'
-        });
-      }
-    });
-  }
-
-  protected cancelarEdicao(): void {
-    this.usuarioEmEdicao = null;
-  }
-
-  protected async salvarAlteracoes(): Promise<void> {
-    if (!this.usuarioEmEdicao || this.salvando) {
+    if (
+      !this.novoAdministrador.Nome.trim() ||
+      !this.novoAdministrador.CPF.trim() ||
+      !this.novoAdministrador.Telefone.trim() ||
+      !this.novoAdministrador.Senha.trim()
+    ) {
+      this.mensagemErro = 'Preencha nome, CPF, telefone e senha.';
       return;
     }
 
     this.salvando = true;
 
-    const usuario = this.usuarioEmEdicao;
-
-    const dados = {
-      Nome: usuario.Nome,
-      CPF: usuario.CPF,
-      Telefone: usuario.Telefone,
-      Email: usuario.Email
-    };
+    const administrador = new Administrador(
+      0,
+      this.novoAdministrador.CPF,
+      this.novoAdministrador.Nome,
+      this.novoAdministrador.Telefone,
+      this.novoAdministrador.Email,
+      this.novoAdministrador.Senha
+    );
 
     try {
-      let sucesso = false;
+      const criado = await this.administradorService.adicionar(administrador);
 
-      if (usuario.tipo === 'Cliente') {
-        sucesso = await this.clienteService.alterarDados(
-          usuario.id,
-          dados
-        );
-      } else {
-        sucesso = await this.prestadorService.alterarDados(
-          usuario.id,
-          dados
-        );
+      if (!criado) {
+        this.mensagemErro = 'Não foi possível cadastrar. Verifique se o CPF já está cadastrado.';
+        return;
       }
 
-      if (sucesso) {
-        await this.carregarUsuarios();
-        this.usuarioEmEdicao = null;
-      } else {
-        console.error('Não foi possível salvar as alterações.');
-      }
+      this.mensagemSucesso = 'Administrador cadastrado com sucesso.';
+      this.limparNovoAdministrador();
+      await this.carregarUsuarios();
     } catch (erro) {
-      console.error('Erro ao alterar usuário:', erro);
+      console.error('Erro ao cadastrar administrador:', erro);
+      this.mensagemErro = 'Ocorreu um erro ao cadastrar o administrador.';
     } finally {
       this.salvando = false;
     }
   }
 
-  protected quantidadePorTipo(tipo: 'Cliente' | 'Prestador'): number {
-    return this.usuarios.filter(usuario => usuario.tipo === tipo).length;
+  editarUsuario(usuario: Usuario): void {
+    this.usuarioEditando = usuario;
+    this.mostrarCadastroAdministrador = false;
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
+
+    this.dadosEdicao = {
+      Nome: usuario.Nome || '',
+      CPF: usuario.CPF || '',
+      Telefone: usuario.Telefone || '',
+      Email: usuario.Email || '',
+      Senha: '',
+      Descricao: usuario instanceof Prestador ? usuario.Descricao || '' : ''
+    };
   }
 
-  private normalizar(valor: string): string {
-    return valor
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .trim();
-  }
-
-  private animarEntrada(): void {
-    animate('.page-intro, .summary-grid, .search-panel', {
-      opacity: [0, 1],
-      translateY: [18, 0],
-      duration: 550,
-      delay: stagger(100),
-      ease: 'outExpo'
-    });
-  }
-
-  private animarLista(): void {
-    const itens = document.querySelectorAll('.user-row');
-
-    if (itens.length > 0) {
-      animate(itens, {
-        opacity: [0, 1],
-        translateY: [10, 0],
-        duration: 350,
-        delay: stagger(35),
-        ease: 'outQuad'
-      });
+  async salvarEdicao(): Promise<void> {
+    if (!this.usuarioEditando) {
+      return;
     }
+
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
+
+    if (
+      !this.dadosEdicao.Nome.trim() ||
+      !this.dadosEdicao.CPF.trim() ||
+      !this.dadosEdicao.Telefone.trim()
+    ) {
+      this.mensagemErro = 'Preencha nome, CPF e telefone.';
+      return;
+    }
+
+    this.salvando = true;
+
+    const dados: any = {
+      Nome: this.dadosEdicao.Nome,
+      CPF: this.dadosEdicao.CPF,
+      Telefone: this.dadosEdicao.Telefone,
+      Email: this.dadosEdicao.Email || null
+    };
+
+    if (this.dadosEdicao.Senha.trim()) {
+      dados.Senha = this.dadosEdicao.Senha;
+    }
+
+    try {
+      let sucesso = false;
+
+      if (this.usuarioEditando.tipoUsuario === 'Cliente') {
+        sucesso = await this.clienteService.alterarDados(this.usuarioEditando.id, dados);
+      } else if (this.usuarioEditando.tipoUsuario === 'Prestador') {
+        dados.Descricao = this.dadosEdicao.Descricao;
+        sucesso = await this.prestadorService.alterarDados(this.usuarioEditando.id, dados);
+      } else {
+        sucesso = await this.administradorService.alterarDados(this.usuarioEditando.id, dados);
+      }
+
+      if (!sucesso) {
+        this.mensagemErro = 'Não foi possível salvar as alterações.';
+        return;
+      }
+
+      this.mensagemSucesso = 'Usuário alterado com sucesso.';
+      this.usuarioEditando = null;
+      await this.carregarUsuarios();
+    } catch (erro) {
+      console.error('Erro ao alterar usuário:', erro);
+      this.mensagemErro = 'Ocorreu um erro ao salvar as alterações.';
+    } finally {
+      this.salvando = false;
+    }
+  }
+
+  cancelarEdicao(): void {
+    this.usuarioEditando = null;
+    this.dadosEdicao = {
+      Nome: '',
+      CPF: '',
+      Telefone: '',
+      Email: '',
+      Senha: '',
+      Descricao: ''
+    };
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
+  }
+
+  private limparNovoAdministrador(): void {
+    this.novoAdministrador = {
+      Nome: '',
+      CPF: '',
+      Telefone: '',
+      Email: '',
+      Senha: ''
+    };
   }
 }

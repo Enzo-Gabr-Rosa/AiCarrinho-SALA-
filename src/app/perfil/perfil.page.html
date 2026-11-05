@@ -268,6 +268,35 @@
             </span>
           </div>
 
+          <!-- Senha -->
+          <div class="form-field">
+            <label for="perfil-senha">Senha</label>
+
+            <div class="password-input-wrapper">
+              <ion-input
+                id="perfil-senha"
+                class="profile-input"
+                [type]="mostrarSenha ? 'text' : 'password'"
+                placeholder="Digite sua senha"
+                fill="outline"
+                [(ngModel)]="usuarioEdicao.Senha">
+              </ion-input>
+
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="alternarVisibilidadeSenha()"
+                [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'"
+                [attr.title]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'">
+                <ion-icon [name]="mostrarSenha ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+              </button>
+            </div>
+
+            <span class="field-hint">
+              Informe a nova senha para atualizar o acesso à sua conta.
+            </span>
+          </div>
+
           <!-- CPF: consulta, sem alteração -->
           <div class="form-field cpf-readonly">
             <label for="perfil-cpf">CPF</label>

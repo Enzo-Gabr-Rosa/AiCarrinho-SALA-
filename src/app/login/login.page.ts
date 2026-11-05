@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormsModule, ValidationErrors, ValidatorFn, Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { IonContent, IonText, IonImg, IonButton, IonInput, IonSelectOption, IonSelect } from '@ionic/angular/standalone';
+import { IonContent, IonText, IonImg, IonButton, IonInput, IonSelectOption, IonSelect, IonIcon } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
 import { ToastController } from '@ionic/angular';
 import { clienteService } from '../Services/cliente-service';
 import { administradorService } from '../Services/administador-service';
@@ -39,7 +41,7 @@ const telefoneValidator: ValidatorFn = (control: AbstractControl): ValidationErr
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonInput, IonButton, IonSelect, IonSelectOption, IonContent, IonText, IonImg, CommonModule, FormsModule, ReactiveFormsModule]
+  imports: [IonInput, IonButton, IonSelect, IonSelectOption, IonContent, IonText, IonImg, IonIcon, CommonModule, FormsModule, ReactiveFormsModule]
 })
 
 export class LoginPage implements AfterViewInit {
@@ -51,6 +53,8 @@ export class LoginPage implements AfterViewInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private toastController = inject(ToastController);
   protected modo: 'login' | 'cadastro' = 'login';
+  protected mostrarSenhaLogin = false;
+  protected mostrarSenhaCadastro = false;
   protected cadastroUsuarioForm = this.formBuilder.group({
     CPF: ['', [Validators.required, Validators.pattern(formatoCpf), cpfValidator]],//basicamente criamos um validator personallizado e um gap para ser usado dentro do pattern
     Nome: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -63,7 +67,17 @@ export class LoginPage implements AfterViewInit {
     CPF: ['', [Validators.required, Validators.pattern(formatoCpf), cpfValidator]],
     Senha: ['', [Validators.required,Validators.minLength(6),Validators.maxLength(45)]],
   });
-  constructor() { 
+  constructor() {
+    addIcons({ eyeOutline, eyeOffOutline });
+  }
+
+  protected alternarVisibilidadeSenha(formulario: 'login' | 'cadastro'): void {
+    if (formulario === 'login') {
+      this.mostrarSenhaLogin = !this.mostrarSenhaLogin;
+      return;
+    }
+
+    this.mostrarSenhaCadastro = !this.mostrarSenhaCadastro;
   }
 
   private async mostrarToast(mensagem: string) {

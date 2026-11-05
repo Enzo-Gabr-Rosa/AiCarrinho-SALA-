@@ -11,9 +11,12 @@ import {
   IonModal,
   IonButton,
   IonTitle,
-  IonToolbar
+  IonToolbar,
+  IonIcon
 } from '@ionic/angular/standalone';
 import { ToastController } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
 import { Usuario } from '../Modelos/usuario-modelo';
 import { clienteService } from '../Services/cliente-service';
 import { prestadorService } from '../Services/prestador-service';
@@ -34,6 +37,7 @@ import { autenticacaoService } from '../Services/autenticacao-service';
     IonButton,
     IonTitle,
     IonToolbar,
+    IonIcon,
     CommonModule,
     FormsModule
   ]
@@ -56,6 +60,7 @@ export class PerfilPage implements OnInit {
   protected tipoUsuario = 'Usuário';
   protected estaAberto = false;
   protected excluindoPerfil = false;
+  protected mostrarSenha = false;
   protected fotoPerfil = 'assets/imgs/Foto User.png';
 
   protected errosValidacao: {
@@ -73,6 +78,7 @@ export class PerfilPage implements OnInit {
   protected erroAnimacao = false;
 
   constructor() {
+    addIcons({ eyeOutline, eyeOffOutline });
     this.usuario = this.autenticacaoService.obterUsuarioAtual();
 
     if (!this.usuario) {
@@ -111,8 +117,13 @@ export class PerfilPage implements OnInit {
     }
   }
 
+  alternarVisibilidadeSenha(): void {
+    this.mostrarSenha = !this.mostrarSenha;
+  }
+
   setOpen(isOpen: boolean): void {
     this.estaAberto = isOpen;
+    this.mostrarSenha = false;
     this.erroAnimacao = false;
     this.errosValidacao = {
       Nome: '',
@@ -152,6 +163,7 @@ export class PerfilPage implements OnInit {
     this.usuario.Nome = nome;
     this.usuario.Email = email;
     this.usuario.Telefone = telefone;
+    this.usuario.Senha = String(this.usuarioEdicao.Senha ?? '').trim();
 
     this.usuarioEdicao = { ...this.usuario };
     this.errosValidacao = {

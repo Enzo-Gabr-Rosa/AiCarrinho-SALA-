@@ -1425,3 +1425,50 @@ ion-content {
   color: #f7f7f7;
   border-color: #303030;
 }
+
+
+/* Campo de senha com controle de visibilidade */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper .profile-input {
+  width: 100%;
+  --padding-end: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  z-index: 2;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  display: grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+  padding: 0;
+
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--Text-Secondary, #858592);
+
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: var(--Violet-Twillight, #4f4bb6);
+  background: rgba(79, 75, 182, 0.1);
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid var(--Violet-Twillight, #4f4bb6);
+  outline-offset: 2px;
+}
