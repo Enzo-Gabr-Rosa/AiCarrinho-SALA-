@@ -34,13 +34,13 @@ export const routes: Routes = [
   {
     path: 'administracao',
     loadComponent: () => import('./administracao/administracao.page').then( m => m.AdministracaoPage),
-    canActivate: [authGuard],
-    data: { tipoUsuario: 'administrador' },
+    canActivate: [authGuard, tipoGuard],
+    data: { tipo: 'administrador' },
   },
   {
     path: 'suporte',
     loadComponent: () => import('./suporte/suporte.page').then( m => m.SuportePage),
-    canActivate: [authGuard],
-    data: { tipoUsuario: 'administrador' },
+    canActivate: [authGuard,tipoGuard],
+    data: { tipo: 'administrador' },
   },
 ];
